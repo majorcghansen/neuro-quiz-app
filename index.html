@@ -106,7 +106,7 @@
 <div class="container">
   <header>
     <h1>Neural Basis of Behavior</h1>
-    <div class="subtitle">Study site for Lectures 1–10: history of brain localization, neuron biology, the action potential, synaptic transmission, neurotransmitter systems, and psychoactive drugs</div>
+    <div class="subtitle">Study site for Lectures 1–14: history of brain localization, neuron biology, the action potential, synaptic transmission, postsynaptic integration, synaptic diseases, neurotransmitter systems, and psychoactive drugs</div>
   </header>
 
   <nav class="tabs">
@@ -363,7 +363,86 @@ const lectures = [
     `
   },
   {
-    title: "Lecture 7 — Nervous System Organization, Glia &amp; Autonomic Control",
+    title: "Lecture 7 — Postsynaptic Integration &amp; Summation",
+    html: `
+      <h4>EPSPs vs. IPSPs</h4>
+      <ul>
+        <li><b>EPSP</b> (excitatory postsynaptic potential): e.g., Na⁺ influx → depolarizing, moves the cell closer to threshold.</li>
+        <li><b>IPSP</b> (inhibitory postsynaptic potential): K⁺ efflux or Cl⁻ influx → hyperpolarizing, moves the cell further from threshold.</li>
+      </ul>
+      <h4>Temporal summation</h4>
+      <ul>
+        <li>Repeated firing from <b>one</b> presynaptic neuron, close together in time, sums before decaying back to baseline — like hearing several people speak at once (overlapping/blended) vs. one at a time (spread out, distinguishable).</li>
+      </ul>
+      <h4>Spatial summation</h4>
+      <ul>
+        <li>Multiple <b>different</b> presynaptic neurons firing near-simultaneously onto the same postsynaptic cell combine their effects — not limited by a single neuron's refractory period (~200 Hz max firing rate for one neuron), so spatial summation can recruit far more input in the same window.</li>
+        <li>Worked example: glutamate (excitatory, opens Na⁺ channels → EPSP) and GABA (inhibitory, opens K⁺ channels → IPSP) acting on the same postsynaptic cell at the same time can cancel out to a flat line (no net change).</li>
+      </ul>
+      <h4>Hierarchical synapses &amp; the axon hillock</h4>
+      <ul>
+        <li>Graded potentials decay/decrement as they travel, so synapses closer to the <b>axon hillock</b> have disproportionately more influence than distal ones — a distal excitatory input may never reach the hillock, while a single inhibitory input positioned near the hillock can override multiple distal excitatory inputs.</li>
+        <li><b>Myelination</b> matters for coincidence detection: demyelination can cause signals to arrive too late to summate together. <b>Axon caliber</b> (diameter) is another factor affecting conduction speed.</li>
+        <li>A single neuron may have <b>10³–10⁵ synapses</b>.</li>
+      </ul>
+      <h4>Synapse anatomy &amp; receptor types</h4>
+      <ul>
+        <li>Axon terminals near dendrites/somas form synapses; the <b>synaptic cleft</b> is ~20–50 nanometers wide; <b>synaptic vesicles</b> release neurotransmitter via <b>exocytosis</b>.</li>
+        <li><b>Ionotropic receptors</b>: fast, direct pore opening via conformational change.</li>
+        <li><b>Metabotropic receptors</b> (e.g., G-protein coupled receptors): G-proteins relay/amplify/transform the signal from the inside face of the membrane — can modulate neighboring ion channels, activate/deactivate enzymes, or change gene expression. Both receptor types activate quickly, but metabotropic effects operate on a much slower time scale than ionotropic ones.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 8 — Synaptic Diseases &amp; Neuropharmacology",
+    html: `
+      <h4>Myasthenia Gravis</h4>
+      <ul>
+        <li>Autoimmune disorder (~36,000 US cases, ~14/100,000) where the immune system attacks postsynaptic <b>acetylcholine (ACh) receptors</b>, especially at the neuromuscular junction.</li>
+        <li>Results in progressive muscle weakness; can become life-threatening if it affects the diaphragm muscles (may require ventilator support). No cure currently exists.</li>
+      </ul>
+      <h4>Parkinson's disease</h4>
+      <ul>
+        <li>~1.5 million US cases (~1% of the population over 65); caused by loss of <b>dopaminergic neurons</b> in the <b>substantia nigra</b> ("black substance," part of the basal ganglia, a movement-control structure).</li>
+        <li>Symptoms: characteristic shuffling gait, inability to initiate voluntary movement, and <b>resting tremor</b> (distinct from intention tremor — not all tremors indicate Parkinson's).</li>
+        <li>Treatment challenge: dopamine cannot cross the <b>blood-brain barrier</b> (BBB, maintained by astrocytes), so <b>L-DOPA</b> (a precursor molecule that CAN cross the BBB) is given and converted to dopamine in the brain (dramatized in the film <i>Awakenings</i>). L-DOPA tolerance develops over time, requiring dose increases with worsening side effects. No cure exists since the death of substantia nigra neurons cannot be halted.</li>
+      </ul>
+      <h4>Huntington's disease (HD)</h4>
+      <ul>
+        <li>Near-opposite of Parkinson's: excessive/uncontrollable movement (<b>chorea</b>, e.g. "hemiballism" — throwing-like movements) rather than an inability to move.</li>
+        <li><b>Autosomal dominant</b> genetic disorder (the "Huntington gene"): 50/50 inheritance chance from an affected parent; symptoms typically don't manifest until midlife, after reproductive decisions are usually made. Famous case: Woody Guthrie.</li>
+        <li>Pathology: <b>medium spiny neurons</b> (inhibitory, GABAergic) in the caudate/putamen (together the <b>striatum</b>, part of the basal ganglia) die off, removing inhibitory input and causing loss of movement control — excess movement results from lost inhibition (contrast with Parkinson's, where movement loss results from lost excitation/dopamine).</li>
+      </ul>
+      <h4>Four classes of psychoactive drugs</h4>
+      <ul>
+        <li><b>Analgesics</b> (pain relief): endogenous endorphins; opium-derived heroin, morphine, codeine. Mechanism: opiate receptor agonists (also Vicodin, Percocet, fentanyl).</li>
+        <li><b>Stimulants</b> (↑ arousal/alertness): amphetamines &amp; cocaine both block dopamine reuptake; amphetamines also increase dopamine release. Both increase release and inhibit reuptake of serotonin, dopamine, and norepinephrine; cocaine additionally blocks voltage-gated Na⁺ channels (its derivative Novocaine uses this for local anesthesia). MDMA acts more heavily on serotonin.</li>
+        <li><b>Depressants/sedatives</b>: dose-dependent effects — low dose = anxiolytic/disinhibition, medium = sleep, high = anesthesia/coma/death. Examples: alcohol, barbiturates, benzodiazepines (e.g., Valium, Rohypnol). Mechanism: GABA receptor agonists — benzodiazepines and barbiturates bind distinct sites on the GABA-A receptor; alcohol's mechanism is less well understood but also opens K⁺ channels (hyperpolarizing).</li>
+        <li><b>Hallucinogens</b> (distort auditory/visual/tactile perception): mescaline (peyote cactus, acts on the norepinephrine system, some subtypes also dopamine); psilocybin ("magic mushrooms," acts on serotonin receptors); the endocannabinoid system (2 receptor types, ligands synthesized on-demand rather than vesicle-stored). Mechanism: serotonin 2A receptor agonists.</li>
+        <li>Some drugs don't fit cleanly into one class — MDMA is classified as a stimulant but causes hallucinations; marijuana is sometimes classified as a depressant, sometimes a hallucinogen.</li>
+      </ul>
+      <h4>SSRIs &amp; antipsychotics</h4>
+      <ul>
+        <li><b>Prozac/SSRIs</b>: selectively inhibit the serotonin reuptake transporter, keeping serotonin in the synaptic cleft longer to repeatedly stimulate the postsynaptic cell — amplifying serotonergic signaling.</li>
+        <li><b>Antipsychotics</b> increase or decrease dopamine and/or serotonin. Traditional/typical antipsychotics (e.g., Haldol) block/decrease dopamine; atypical antipsychotics (e.g., Risperdal) work more on serotonin.</li>
+      </ul>
+      <h4>Case study: the cholinergic synapse — every point drugs can intervene</h4>
+      <ul>
+        <li><b>1. Synthesis</b>: ACh is formed from acetyl-CoA + choline (both diet-derived); drugs can block or promote this step.</li>
+        <li><b>2. Release (exocytosis)</b>: botulinum toxin (Botox) blocks ACh release → flaccid paralysis (lasts ~3 months until the neuron regrows an axon terminal). Black widow spider venom and beta-bungarotoxin promote/over-stimulate release → rigid paralysis (opposite mechanism, same predatory purpose of immobilizing prey) — both are useful neuroscience research tools despite being toxins.</li>
+        <li><b>3. Postsynaptic receptors</b>: curare and alpha-bungarotoxin block ACh receptors. Nicotine selectively activates only ionotropic ACh receptors; muscarine selectively activates only metabotropic ACh receptors — this pharmacological dissociation let researchers isolate ionotropic vs. metabotropic receptor functions (endogenous ACh normally activates both types at once, making them impossible to separate).</li>
+        <li><b>4. Breakdown</b>: acetylcholinesterase normally breaks ACh into choline + acetate; blocking this enzyme keeps ACh in the cleft longer, prolonging/strengthening signaling.</li>
+        <li><b>5. Reuptake</b>: blocking reuptake transporters is the SSRI mechanism for serotonin (less relevant to ACh specifically).</li>
+      </ul>
+      <h4>Agonist vs. antagonist (formal definitions)</h4>
+      <ul>
+        <li><b>Agonist</b>: anything that increases the likelihood the postsynaptic cell will fire.</li>
+        <li><b>Antagonist</b>: anything that decreases the likelihood the postsynaptic cell will fire.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 11 — Nervous System Organization, Glia &amp; Autonomic Control",
     html: `
       <h4>Behind the Scenes: David Blaine &amp; autonomic control</h4>
       <ul>
@@ -400,7 +479,7 @@ const lectures = [
     `
   },
   {
-    title: "Lecture 8 — Synaptic Detail, Glia's Synaptic Role &amp; Seizures",
+    title: "Lecture 12 — Synaptic Detail, Glia's Synaptic Role &amp; Seizures",
     html: `
       <h4>Discovery of chemical transmission</h4>
       <ul>
@@ -429,7 +508,7 @@ const lectures = [
     `
   },
   {
-    title: "Lecture 9 — Neurotransmitter Systems &amp; Pharmacology Basics",
+    title: "Lecture 13 — Neurotransmitter Systems &amp; Pharmacology Basics",
     html: `
       <h4>Amino acid neurotransmitters</h4>
       <ul>
@@ -454,7 +533,7 @@ const lectures = [
     `
   },
   {
-    title: "Lecture 10 — Psychoactive Drugs &amp; Addiction",
+    title: "Lecture 14 — Psychoactive Drugs &amp; Addiction",
     html: `
       <h4>CNS Stimulants</h4>
       <ul>
@@ -583,7 +662,26 @@ const flashcards = [
   { front: "THC", back: "δ-9-tetrahydrocannabinol — the active psychoactive ingredient in cannabis; acts on cannabinoid receptors." },
   { front: "Doogie mice", back: "Tsien (2000) transgenic mice with enhanced NMDA receptor function showed better object recognition, memory, and maze-solving." },
   { front: "Curare", back: "A poison that blocks nicotinic acetylcholine receptors at the neuromuscular junction, causing paralysis." },
-  { front: "Bystander stress study (Mychasiuk et al., 2011)", back: "Indirect prenatal stress (a stressed cage-mate) altered dendritic length/spine density in rat offspring brains, with females more affected than males." }
+  { front: "Bystander stress study (Mychasiuk et al., 2011)", back: "Indirect prenatal stress (a stressed cage-mate) altered dendritic length/spine density in rat offspring brains, with females more affected than males." },
+  { front: "Spatial vs. temporal summation (firing rate limit)", back: "Temporal summation is limited by one neuron's max firing rate (~200 Hz); spatial summation isn't, since it combines input from many different presynaptic neurons at once." },
+  { front: "Axon hillock", back: "The site where the axon meets the soma; graded potentials decay with distance, so synapses closer to the hillock have more influence on whether an action potential fires." },
+  { front: "Synaptic cleft (size)", back: "The gap between presynaptic and postsynaptic membranes, about 20–50 nanometers wide." },
+  { front: "Exocytosis", back: "The process by which synaptic vesicles fuse with the presynaptic membrane and release neurotransmitter into the cleft." },
+  { front: "G-protein coupled receptor", back: "A metabotropic receptor type; the G-protein relays/amplifies the signal inside the cell, can modulate nearby ion channels, enzymes, or gene expression." },
+  { front: "Myasthenia Gravis", back: "Autoimmune disease where antibodies attack postsynaptic ACh receptors at the neuromuscular junction, causing progressive muscle weakness; no cure." },
+  { front: "Substantia nigra", back: "\"Black substance\" — a pigmented, dopaminergic-neuron-rich part of the basal ganglia; its degeneration causes Parkinson's disease." },
+  { front: "L-DOPA", back: "A dopamine precursor that can cross the blood-brain barrier (unlike dopamine itself); used to treat Parkinson's disease, though tolerance develops over time." },
+  { front: "Resting tremor", back: "A tremor that occurs when the affected body part is at rest (not moving); characteristic of Parkinson's disease, distinct from intention tremor." },
+  { front: "Huntington's disease", back: "Autosomal dominant genetic disorder causing chorea (excessive involuntary movement); caused by death of inhibitory medium spiny neurons in the striatum." },
+  { front: "Medium spiny neurons", back: "Inhibitory, GABAergic neurons of the caudate/putamen (striatum); their death causes the excess movement seen in Huntington's disease." },
+  { front: "Chorea", back: "Involuntary, irregular, dance-like movements; a hallmark symptom of Huntington's disease (hemiballism is a severe throwing-like form)." },
+  { front: "Botulinum toxin (Botox)", back: "Blocks ACh release from presynaptic terminals, causing flaccid paralysis; effects last ~3 months." },
+  { front: "Black widow spider venom", back: "Promotes/over-stimulates ACh release from presynaptic terminals, causing rigid paralysis (opposite mechanism to Botox)." },
+  { front: "Muscarine", back: "Selectively activates metabotropic ACh receptors; used with nicotine to pharmacologically distinguish ionotropic from metabotropic ACh receptor effects." },
+  { front: "Acetylcholinesterase", back: "The enzyme that breaks down ACh into choline + acetate in the synaptic cleft; blocking it prolongs ACh signaling." },
+  { front: "SSRI (Prozac) mechanism", back: "Selectively blocks the serotonin reuptake transporter, keeping serotonin in the synaptic cleft longer and amplifying serotonergic signaling." },
+  { front: "Typical vs. atypical antipsychotics", back: "Typical (e.g., Haldol) mainly block/decrease dopamine; atypical (e.g., Risperdal) work more on serotonin." },
+  { front: "Novocaine", back: "A cocaine derivative used for local anesthesia; works by reducing Na⁺ channel permeability, unlike cocaine's psychoactive reuptake-blocking effect." }
 ];
 
 let fcOrder = flashcards.map((_, i) => i);
@@ -803,7 +901,58 @@ const questions = [
     explanation: "LSD partially activates 5-HT2A serotonin receptors, disrupting sensory filtering and producing hallucinations." },
   { q: "Cannabis increases dopamine release even though dopaminergic neurons lack cannabinoid receptors directly. This happens because cannabinoids:",
     options: { a: "directly bind dopamine receptors", b: "block dopamine reuptake transporters", c: "inhibit GABAergic inhibition of dopamine neurons (disinhibition)", d: "increase dopamine synthesis enzymes", e: "none of these" }, correct: "c",
-    explanation: "Cannabinoids reduce GABAergic inhibition of dopamine neurons, producing a net increase in dopamine release — a mechanism similar to opioids." }
+    explanation: "Cannabinoids reduce GABAergic inhibition of dopamine neurons, producing a net increase in dopamine release — a mechanism similar to opioids." },
+  { q: "Temporal summation refers to:",
+    options: { a: "combining input from many different presynaptic neurons at once", b: "repeated firing from one presynaptic neuron summing before decaying", c: "the decay of a graded potential over distance", d: "the refractory period after an action potential", e: "none of these" }, correct: "b",
+    explanation: "Temporal summation is repeated firing from a single presynaptic neuron close together in time, so the effects stack before decaying." },
+  { q: "Why isn't spatial summation limited by a single neuron's maximum firing rate (~200 Hz)?",
+    options: { a: "It doesn't involve neurotransmitters", b: "It combines input from multiple different presynaptic neurons, not repeated firing from one", c: "It only occurs at the axon hillock", d: "It happens too fast to be limited", e: "none of these" }, correct: "b",
+    explanation: "Spatial summation pools input from many different presynaptic cells firing near-simultaneously, sidestepping any single neuron's firing-rate ceiling." },
+  { q: "Why do synapses located closer to the axon hillock have more influence on whether a neuron fires?",
+    options: { a: "They release more neurotransmitter per vesicle", b: "Graded potentials decay/decrement with distance, so distal inputs may never reach the hillock", c: "They are always excitatory", d: "They are myelinated while distal synapses are not", e: "none of these" }, correct: "b",
+    explanation: "Because graded potentials weaken as they travel, proximal synapses (near the hillock) exert disproportionate influence over distal ones." },
+  { q: "Demyelination can impair postsynaptic integration mainly by:",
+    options: { a: "increasing neurotransmitter release", b: "causing signals to arrive too late to summate together", c: "blocking all ionotropic receptors", d: "increasing axon caliber", e: "none of these" }, correct: "b",
+    explanation: "Myelin loss slows conduction, so inputs that should arrive together for summation can instead arrive out of sync." },
+  { q: "The synaptic cleft is approximately:",
+    options: { a: "20–50 nanometers wide", b: "20–50 micrometers wide", c: "1–2 millimeters wide", d: "the same width as a neuron's soma", e: "none of these" }, correct: "a",
+    explanation: "The synaptic cleft is a very narrow gap, roughly 20–50 nanometers across." },
+  { q: "Compared to ionotropic receptors, metabotropic (G-protein coupled) receptors:",
+    options: { a: "open ion channels directly with no delay", b: "act on a much slower time scale and can involve second-messenger cascades", c: "are only found in muscle tissue", d: "cannot affect gene expression", e: "none of these" }, correct: "b",
+    explanation: "Metabotropic receptors work through G-proteins/second messengers, producing effects that unfold more slowly than the direct pore-opening of ionotropic receptors." },
+  { q: "Myasthenia Gravis is caused by:",
+    options: { a: "loss of dopaminergic neurons in the substantia nigra", b: "death of medium spiny neurons in the striatum", c: "the immune system attacking postsynaptic ACh receptors at the neuromuscular junction", d: "a genetic mutation causing excess GABA release", e: "none of these" }, correct: "c",
+    explanation: "Myasthenia Gravis is autoimmune: antibodies attack postsynaptic acetylcholine receptors, most severely at the neuromuscular junction." },
+  { q: "Parkinson's disease results from the degeneration of dopaminergic neurons in the:",
+    options: { a: "hippocampus", b: "substantia nigra", c: "cerebellum", d: "neuromuscular junction", e: "none of these" }, correct: "b",
+    explanation: "Parkinson's is caused by loss of dopamine-producing neurons in the substantia nigra, part of the basal ganglia." },
+  { q: "L-DOPA is used to treat Parkinson's disease instead of dopamine itself because:",
+    options: { a: "L-DOPA is more potent than dopamine", b: "dopamine cannot cross the blood-brain barrier, but L-DOPA can", c: "L-DOPA has no side effects", d: "dopamine causes seizures", e: "none of these" }, correct: "b",
+    explanation: "Dopamine can't cross the BBB, so the precursor L-DOPA is given instead and converted to dopamine once inside the brain." },
+  { q: "A resting tremor, as seen in Parkinson's disease, is best described as a tremor that occurs:",
+    options: { a: "only during voluntary movement", b: "when the affected body part is at rest, not moving", c: "only during sleep", d: "only after exercise", e: "none of these" }, correct: "b",
+    explanation: "Resting tremor appears when the limb is at rest, distinguishing it from intention tremor (which occurs during movement)." },
+  { q: "Huntington's disease is caused by the death of which neurons, and what type of movement results?",
+    options: { a: "dopaminergic neurons in the substantia nigra; results in an inability to move", b: "medium spiny (GABAergic) neurons in the striatum; results in excessive/uncontrollable movement (chorea)", c: "postsynaptic ACh receptors at the neuromuscular junction; results in muscle weakness", d: "cerebellar Purkinje cells; results in loss of balance only", e: "none of these" }, correct: "b",
+    explanation: "Huntington's involves death of inhibitory medium spiny neurons in the striatum, removing inhibition and causing chorea (excess movement) — the opposite pattern from Parkinson's." },
+  { q: "Huntington's disease is inherited in what pattern, and why does this make it hard to select against?",
+    options: { a: "Autosomal recessive; carriers show no symptoms at all", b: "Autosomal dominant; symptoms typically don't appear until midlife, after reproductive decisions are made", c: "X-linked; only affects males", d: "It is not genetic", e: "none of these" }, correct: "b",
+    explanation: "HD is autosomal dominant (50/50 inheritance chance from an affected parent), but its late onset means it usually isn't caught before people have already had children." },
+  { q: "Botulinum toxin (Botox) and black widow spider venom have opposite effects on the cholinergic synapse because:",
+    options: { a: "Botox blocks ACh release (flaccid paralysis); black widow venom promotes ACh release (rigid paralysis)", b: "Botox promotes ACh release; black widow venom blocks it", c: "both block ACh receptors identically", d: "neither affects ACh release", e: "none of these" }, correct: "a",
+    explanation: "Botox blocks presynaptic ACh release causing flaccid paralysis, while black widow venom over-stimulates release causing rigid paralysis." },
+  { q: "Nicotine and muscarine were useful research tools because they let scientists:",
+    options: { a: "destroy ACh receptors permanently", b: "selectively activate ionotropic (nicotine) vs. metabotropic (muscarine) ACh receptors separately", c: "block acetylcholinesterase", d: "increase ACh synthesis", e: "none of these" }, correct: "b",
+    explanation: "Since endogenous ACh normally activates both receptor types at once, nicotine and muscarine let researchers isolate ionotropic vs. metabotropic effects individually." },
+  { q: "Blocking acetylcholinesterase would be expected to:",
+    options: { a: "prevent ACh synthesis", b: "prolong/strengthen ACh signaling by keeping it in the cleft longer", c: "immediately destroy the postsynaptic receptors", d: "have no effect on signaling", e: "none of these" }, correct: "b",
+    explanation: "Acetylcholinesterase normally breaks down ACh; blocking it leaves more ACh in the cleft to keep stimulating the postsynaptic cell." },
+  { q: "SSRIs like Prozac work by:",
+    options: { a: "blocking dopamine receptors", b: "selectively blocking the serotonin reuptake transporter, prolonging serotonin's presence in the cleft", c: "increasing GABA release", d: "blocking serotonin synthesis", e: "none of these" }, correct: "b",
+    explanation: "SSRIs (selective serotonin reuptake inhibitors) block the transporter that normally clears serotonin from the synapse, amplifying its signaling." },
+  { q: "Typical (e.g., Haldol) vs. atypical (e.g., Risperdal) antipsychotics differ mainly in that:",
+    options: { a: "typical antipsychotics mainly block dopamine; atypical ones work more on serotonin", b: "typical antipsychotics work only on GABA", c: "atypical antipsychotics increase dopamine", d: "there is no meaningful difference", e: "none of these" }, correct: "a",
+    explanation: "Typical antipsychotics primarily decrease dopamine signaling, while atypical antipsychotics act more on serotonin systems." }
 ];
 
 let selectedAnswers = {};
