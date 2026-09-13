@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Basis of Behavior — Study Site</title>
+<style>
+  :root {
+    --blue: #2b4c7e;
+    --blue-light: #e8eef7;
+    --green: #2e7d32;
+    --red: #c62828;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    color: #1a1a1a;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 20px 20px 60px; }
+  header { margin-bottom: 8px; }
+  h1 { font-size: 1.4rem; margin: 0 0 2px; color: var(--blue); }
+  .subtitle { color: #555; font-size: 0.9rem; margin-bottom: 16px; }
+
+  nav.tabs {
+    position: sticky; top: 0; background: var(--bg);
+    display: flex; gap: 8px; padding: 10px 0; z-index: 10;
+    border-bottom: 1px solid #ddd; margin-bottom: 20px;
+  }
+  nav.tabs button {
+    flex: 1; padding: 10px 8px; border: none; border-radius: 8px;
+    background: var(--card); color: var(--blue); font-weight: 600;
+    cursor: pointer; font-size: 0.95rem; box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  nav.tabs button.active { background: var(--blue); color: white; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- LEARN TAB ---- */
+  .lecture-block {
+    background: var(--card); border-radius: 10px; margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden;
+  }
+  .lecture-header {
+    padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; font-weight: 600; color: var(--blue);
+  }
+  .lecture-header:hover { background: var(--blue-light); }
+  .lecture-body { padding: 0 18px 16px; display: none; font-size: 0.92rem; line-height: 1.5; }
+  .lecture-body.open { display: block; }
+  .lecture-body h4 { margin: 12px 0 4px; color: var(--blue); }
+  .lecture-body ul { margin: 4px 0 8px 18px; padding: 0; }
+  .lecture-body li { margin-bottom: 3px; }
+  .chevron { transition: transform 0.15s ease; }
+  .chevron.open { transform: rotate(90deg); }
+
+  /* ---- FLASHCARDS TAB ---- */
+  .fc-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 0.9rem; color: #555; }
+  .fc-wrap { perspective: 1200px; height: 260px; margin-bottom: 16px; }
+  .fc-card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s; cursor: pointer;
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 12px; background: var(--card); box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 24px; font-size: 1.1rem;
+  }
+  .fc-face.back { transform: rotateY(180deg); background: var(--blue-light); font-size: 0.95rem; }
+  .fc-label { position: absolute; top: 10px; left: 14px; font-size: 0.75rem; color: #999; font-weight: 600; text-transform: uppercase; }
+  .fc-nav { display: flex; gap: 10px; justify-content: center; }
+  .fc-nav button, #shuffle-btn {
+    background: var(--blue); color: white; border: none; padding: 10px 20px;
+    border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+  }
+  .fc-nav button:hover, #shuffle-btn:hover { opacity: 0.9; }
+  .fc-nav button:disabled { background: #bbb; cursor: default; }
+
+  /* ---- QUIZ TAB ---- */
+  .progress-bar { background: #ddd; border-radius: 6px; height: 8px; margin: 8px 0 16px; overflow: hidden; }
+  .progress-fill { background: var(--blue); height: 100%; width: 0%; transition: width 0.2s ease; }
+  .question-card { background: var(--card); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .q-number { font-weight: 600; color: var(--blue); margin-bottom: 6px; }
+  .q-text { font-weight: 500; margin-bottom: 12px; line-height: 1.4; }
+  .options label { display: block; padding: 8px 10px; border-radius: 6px; margin-bottom: 4px; cursor: pointer; line-height: 1.4; }
+  .options label:hover { background: #f0f2f5; }
+  .options input { margin-right: 8px; }
+  .options label.correct { background: #e6f4ea; color: var(--green); }
+  .options label.incorrect { background: #fdecea; color: var(--red); }
+  .explanation { margin-top: 10px; padding: 10px 12px; background: var(--blue-light); border-left: 3px solid var(--blue); font-size: 0.9rem; border-radius: 4px; display: none; }
+  .explanation.show { display: block; }
+  #submit-btn, #retry-btn { background: var(--blue); color: white; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; display: block; margin: 24px auto; }
+  #submit-btn:hover, #retry-btn:hover { opacity: 0.9; }
+  #result { display: none; text-align: center; background: var(--card); padding: 24px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
+  #result h2 { color: var(--blue); margin-top: 0; }
+  .score-num { font-size: 2.5rem; font-weight: 700; color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Neural Basis of Behavior</h1>
+    <div class="subtitle">Study site for Lectures 1–10: history of brain localization, neuron biology, the action potential, synaptic transmission, neurotransmitter systems, and psychoactive drugs</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="learn">Learn</button>
+    <button class="tab-btn" data-tab="flashcards">Flashcards</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+  </nav>
+
+  <!-- ============ LEARN TAB ============ -->
+  <section id="learn" class="tab-panel active"></section>
+
+  <!-- ============ FLASHCARDS TAB ============ -->
+  <section id="flashcards" class="tab-panel">
+    <div class="fc-controls">
+      <span id="fc-counter">Card 1 / 74</span>
+      <button id="shuffle-btn">Shuffle</button>
+    </div>
+    <div class="fc-wrap">
+      <div class="fc-card" id="fc-card">
+        <div class="fc-face front"><span class="fc-label">Term</span><div id="fc-front-text"></div></div>
+        <div class="fc-face back"><span class="fc-label">Definition</span><div id="fc-back-text"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button id="fc-prev">Previous</button>
+      <button id="fc-flip">Flip</button>
+      <button id="fc-next">Next</button>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ TAB ============ -->
+  <section id="quiz" class="tab-panel">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="result">
+      <h2>Your Score</h2>
+      <div class="score-num" id="score-num">0 / 0</div>
+      <p id="score-msg"></p>
+      <button id="retry-btn">Retry Quiz</button>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="submit-btn">Submit Quiz</button>
+  </section>
+</div>
+
+<script>
+/* ================= TAB SWITCHING ================= */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ================= LEARN TAB CONTENT ================= */
+const lectures = [
+  {
+    title: "Lecture 1 — History of Brain Localization",
+    html: `
+      <h4>Aristotle (skeptic)</h4>
+      <ul>
+        <li>Did not believe the brain controls behavior — pointed to headless chickens/insects still moving.</li>
+        <li>Modern explanation: the spinal cord and distributed ganglia allow reflexive movement without a brain.</li>
+      </ul>
+      <h4>Galen (ancient Rome)</h4>
+      <ul>
+        <li>Physician to gladiators; noticed brain/head injuries changed behavior.</li>
+        <li>First evidence linking brain damage to behavioral change — origin of lesion studies.</li>
+      </ul>
+      <h4>Fritz &amp; Hitzig (1870, Germany)</h4>
+      <ul>
+        <li>Electrically stimulated exposed dog brains. Back of brain → no response; middle region → contralateral movement.</li>
+        <li>Conclusions: brain is electrically excitable, has regional specificity, results were replicable across species.</li>
+      </ul>
+      <h4>Bartholow &amp; Mary Rafferty (Cincinnati, 1874)</h4>
+      <ul>
+        <li>Replicated stimulation in a living, awake human via an exposed skull ulcer; she couldn't override triggered movement.</li>
+        <li>She died days later; backlash contributed to the AMA banning non-consensual human experimentation.</li>
+        <li>First real evidence electrical brain activity controls behavior in humans; confirmed continuity across species.</li>
+      </ul>
+      <h4>John Flynn (~1950s, cats)</h4>
+      <ul>
+        <li>Stimulated the hypothalamus: one site → affective defense (arched back, hissing); another → quiet biting attack (stalk/pounce, no vocalization).</li>
+        <li>Showed stimulation can elicit complex, integrated, goal-directed behavior, not just muscle twitches.</li>
+      </ul>
+      <h4>Wilder Penfield (1950s–60s)</h4>
+      <ul>
+        <li>Worked with awake epilepsy patients (brain has no pain receptors). Back of brain → flashes of light; lateral → hearing sounds; midline → arm movement.</li>
+        <li>Some stimulation evoked specific memories and emotions — information could be "read out" of the brain electrically.</li>
+      </ul>
+      <h4>Michael Gazzaniga — split-brain research</h4>
+      <ul>
+        <li>Performed corpus callosotomy (severing the corpus callosum) in epilepsy patients.</li>
+        <li>Right hemisphere (left visual field) processed faces; left hemisphere (right visual field) processed only contours.</li>
+        <li>Case example: a boy could not say his crush's name aloud (right hemisphere, no speech access) but could spell "Liz" with Scrabble tiles.</li>
+      </ul>
+      <h4>Key terms &amp; modern tools</h4>
+      <ul>
+        <li><b>Contralateral</b> = opposite side; <b>ipsilateral</b> = same side.</li>
+        <li><b>Localization of function</b>: language is left-hemisphere in ~90% of right-handers; facial recognition tends right-hemisphere dominant.</li>
+        <li><b>fMRI</b>: non-invasive method showing which brain regions use more glucose/oxygen during tasks.</li>
+        <li>Take-home: the brain controls the full range of behavior (perception, motor, sensation, memory) and is differentially activated by task — not a simple "left brain/right brain" dichotomy.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 2 — The Neuron as a Cell",
+    html: `
+      <h4>Basic components (like any cell)</h4>
+      <ul>
+        <li><b>Soma</b> (cell body), <b>nucleus</b>, <b>ribosomes</b> (build proteins), <b>endoplasmic reticulum</b> (processes/packages proteins).</li>
+        <li><b>Mitochondria</b> — convert food energy to usable cellular energy. The brain is ~3 lbs but consumes ~20% of the body's total energy.</li>
+        <li><b>Cytoskeleton</b> — gives structure and lets the cell extend processes; <b>cell membrane</b> is especially specialized in neurons.</li>
+      </ul>
+      <h4>Franz Nissl — the Nissl stain</h4>
+      <ul>
+        <li>Stains the endoplasmic reticulum, which is concentrated in the cell body → effectively a <b>cell body stain</b>.</li>
+        <li>Brain tissue is made rigid, sliced thin, mounted, and stained to reveal structures under a microscope.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 3 — Hodgkin &amp; Huxley and the Resting Potential",
+    html: `
+      <h4>Hodgkin &amp; Huxley (1950s, Nobel 1963)</h4>
+      <ul>
+        <li>Wanted to <i>measure</i> inherent electrical properties of neurons (not just stimulate).</li>
+        <li>Model organism: the squid giant axon (~1mm diameter) — large, easy to place electrodes in/around; invertebrates use giant axons for speed since they lack substantial myelin.</li>
+      </ul>
+      <h4>Recording setup</h4>
+      <ul>
+        <li>Two electrodes (measure a difference), an amplifier, and an oscilloscope (voltage vs. time).</li>
+      </ul>
+      <h4>The four experiments</h4>
+      <ul>
+        <li>Both electrodes outside → baseline 0, confirms setup works.</li>
+        <li>One inside, one outside, unstimulated → −70 mV = the <b>resting potential</b>.</li>
+        <li>Stimulated axon → voltage spikes well above 0, dips slightly below −70 mV, then restabilizes = the <b>action potential</b>.</li>
+      </ul>
+      <h4>Equilibrium concepts</h4>
+      <ul>
+        <li><b>Diffusion</b>: molecules move high → low concentration. <b>Electrical equilibrium</b>: like charges repel, opposite attract; a "dead battery" = no more gradient.</li>
+        <li>Selectively permeable membrane: system balances minimizing the chemical gradient AND the electrical gradient — not full concentration equality.</li>
+      </ul>
+      <h4>Ion distribution in the neuron</h4>
+      <ul>
+        <li>Large proteins stuck inside, mostly negatively charged. Na⁺ is more concentrated outside at rest; K⁺ is more concentrated inside; Cl⁻ is differentially distributed.</li>
+      </ul>
+      <h4>The sodium-potassium pump</h4>
+      <ul>
+        <li>Continuously active; each cycle pumps <b>3 Na⁺ out, 2 K⁺ in</b> → net removes positive charge → creates the negative resting potential.</li>
+        <li>Powered by ATP → ADP. This pump is why the brain consumes so much energy.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 4 — The Nernst Equation &amp; the Action Potential",
+    html: `
+      <h4>Ion distribution at rest (axoplasm = inside)</h4>
+      <ul>
+        <li>K⁺: high inside (~400), low outside (~10–20). Na⁺: low inside (~50), high outside (~440). Cl⁻: low inside, high outside.</li>
+        <li>Na⁺ and K⁺ are actively pumped against their gradients; Cl⁻ moves relatively freely.</li>
+      </ul>
+      <h4>The Nernst Equation</h4>
+      <ul>
+        <li>V = ± constant × log(ion outside / ion inside) — predicts the voltage a freely moving ion would produce.</li>
+        <li>Predicted values: Cl⁻ ≈ −69 mV (matches resting potential); Na⁺ ≈ +57 mV (matches AP peak); K⁺ ≈ −78 mV (matches hyperpolarization overshoot).</li>
+      </ul>
+      <h4>Reaching threshold &amp; voltage-gated channels</h4>
+      <ul>
+        <li>At about −55 mV the neuron crosses threshold → triggers the full, stereotyped action potential (not graded).</li>
+        <li>Voltage-gated channels are ion-specific pores that open at specific voltage levels (different thresholds for Na⁺ vs K⁺ channels).</li>
+      </ul>
+      <h4>Sequence of the action potential</h4>
+      <ul>
+        <li>Threshold reached (~−55 mV) → voltage-gated Na⁺ channels open → Na⁺ influx = <b>depolarization</b>.</li>
+        <li>Voltage-gated K⁺ channels open → K⁺ efflux = <b>repolarization</b>.</li>
+        <li>Na⁺ channels close; K⁺ channels close slightly late → overshoot below resting potential = <b>hyperpolarization</b>.</li>
+        <li>Na⁺/K⁺ pump gradually restores resting potential (−70 mV).</li>
+      </ul>
+      <h4>Refractory period &amp; the All-or-None Law</h4>
+      <ul>
+        <li>~2 ms window after an AP during which the neuron cannot fire again (channels resetting).</li>
+        <li>Every action potential in a given neuron is identical in size/shape/speed — stronger stimuli produce more frequent firing or recruit more neurons, not a bigger spike.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 5 — Propagation &amp; Synaptic Transmission",
+    html: `
+      <h4>Graded Potentials vs. Action Potentials</h4>
+      <ul>
+        <li>Graded: decremental (diminishes with distance), very fast, spreads passively in all directions.</li>
+        <li>Action potential: all-or-none (constant), slower (~100 m/s max), travels in one direction only.</li>
+      </ul>
+      <h4>Propagation down the axon</h4>
+      <ul>
+        <li>Each AP triggers a graded potential in the next segment; if still above threshold there, it triggers a new AP ("regeneration").</li>
+        <li>One-directional because the just-fired segment is hyperpolarized/refractory and can't immediately re-fire — signal only moves into "fresh" axon.</li>
+      </ul>
+      <h4>Myelination</h4>
+      <ul>
+        <li>CNS: oligodendrocytes myelinate axons. PNS: Schwann cells myelinate axons.</li>
+        <li>Myelin blocks ion movement under the sheath (only graded potential there); <b>Nodes of Ranvier</b> are unmyelinated gaps where APs actually regenerate — this is <b>saltatory conduction</b>.</li>
+        <li>Myelination is one of the last brain maturation processes (3rd trimester through 3rd decade of life); correlates with motor development and improved memory (hippocampus).</li>
+        <li>Multiple sclerosis = demyelinating disease. CNS myelin generally cannot regenerate; PNS (Schwann cell) myelin sometimes can, especially in children.</li>
+      </ul>
+      <h4>Synaptic transmission (end of axon)</h4>
+      <ul>
+        <li>AP arrives at axon terminal → opens voltage-gated Ca²⁺ channels → Ca²⁺ influx triggers vesicles to dock.</li>
+        <li><b>Exocytosis</b>: vesicles fuse with membrane, release neurotransmitter into the synapse (~10 nm wide).</li>
+        <li>Neurotransmitters diffuse passively across the cleft — diffusion to postsynaptic receptors is nearly instantaneous.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 6 — Synaptic Mechanisms &amp; Neurotransmitters",
+    html: `
+      <h4>Synapse anatomy</h4>
+      <ul>
+        <li>Pre-synaptic cell (sends signal) → cleft (space) → post-synaptic cell (receives signal).</li>
+        <li>Types by connection point: axosomatic, axodendritic (most common), axoaxonic, dendrodendritic.</li>
+      </ul>
+      <h4>Ligand-gated channels</h4>
+      <ul>
+        <li>Open when a ligand (e.g., neurotransmitter) binds — lock-and-key specificity between transmitter and receptor shape.</li>
+      </ul>
+      <h4>Postsynaptic responses — 3 outcomes</h4>
+      <ul>
+        <li><b>Depolarization (EPSP)</b>: e.g., Na⁺ influx → excitatory, moves cell closer to threshold.</li>
+        <li><b>Flat/no change</b>: simultaneous Na⁺ in &amp; K⁺ out cancel out.</li>
+        <li><b>Hyperpolarization (IPSP)</b>: K⁺ efflux or Cl⁻ influx → inhibitory, moves cell further from threshold.</li>
+        <li>Presynaptic signaling is binary (all-or-none AP), but postsynaptic responses are graded/varied — massively increases information-processing complexity.</li>
+      </ul>
+      <h4>Ionotropic vs. Metabotropic receptors</h4>
+      <ul>
+        <li><b>Ionotropic</b>: neurotransmitter directly opens an ion channel — fast, short-lived.</li>
+        <li><b>Metabotropic</b>: neurotransmitter triggers a second-messenger system inside the cell — slower onset, but long-lasting (ms to days); can alter gene transcription, relevant to learning/memory.</li>
+      </ul>
+      <h4>Major neurotransmitter classes</h4>
+      <ul>
+        <li><b>Acetylcholine</b> — neuromuscular junction; first neurotransmitter discovered.</li>
+        <li><b>Monoamines</b> — serotonin; catecholamines (dopamine → norepinephrine → epinephrine).</li>
+        <li><b>Amino acids</b> — glutamate (primary excitatory, EPSP via Na⁺ influx); GABA (primary inhibitory, IPSP via K⁺ efflux).</li>
+        <li><b>Peptides</b> (e.g., endorphins, substance P); <b>others</b> (purines, gases like nitric oxide).</li>
+      </ul>
+      <h4>Cleanup, quanta, and Dale's Law</h4>
+      <ul>
+        <li><b>Reuptake</b>: presynaptic transporters pull neurotransmitter back in via endocytosis. <b>Enzymatic breakdown</b>: e.g., acetylcholinesterase breaks down ACh.</li>
+        <li><b>Quanta</b>: neurotransmitter is released in fixed packets (one vesicle's worth) — always an integer multiple, never fractional.</li>
+        <li><b>Dale's Law</b>: each neuron releases one primary type of neurotransmitter (exception: some release multiple in a fixed, homogeneous ratio per vesicle).</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 7 — Nervous System Organization, Glia &amp; Autonomic Control",
+    html: `
+      <h4>Behind the Scenes: David Blaine &amp; autonomic control</h4>
+      <ul>
+        <li><b>Somatic functions</b> (voluntary, e.g. walking) vs. <b>autonomic functions</b> (involuntary, life-sustaining organ functions).</li>
+        <li>Neal Miller (1960s) challenged the idea that autonomic functions are beyond conscious control — showed rats/dogs could learn to alter heart rate/salivation for reward (findings hard to replicate, still controversial).</li>
+        <li><b>Biofeedback techniques</b> let humans consciously alter heart rate, blood flow, etc.</li>
+        <li>The <b>insular cortex (insula)</b> is proposed as key to voluntary control of autonomic functions via <b>interoception</b> (monitoring internal body state) — likely explains Blaine's feats.</li>
+      </ul>
+      <h4>Building blocks of the nervous system</h4>
+      <ul>
+        <li>~150 years ago, Camillo Golgi's <b>nerve net theory</b> held the nervous system was one continuous network; Cajal's <b>neuron doctrine</b> (using Golgi's own stain) proved neurons are discrete cells.</li>
+        <li><b>CNS</b> (central nervous system) = brain and spinal cord. <b>PNS</b> (peripheral nervous system) = nerves connecting the CNS to the rest of the body.</li>
+        <li>CNS parts: cerebrum (2 hemispheres, 4 lobes), basal ganglia, diencephalon (thalamus + hypothalamus), <b>cerebellum</b> ("little brain" — packs in more neurons than the entire cerebrum), brain stem, limbic system (hypothalamus, amygdala, hippocampus, fornix), ventricular system (CSF-producing cavities).</li>
+        <li>Surprising finding: despite assumptions, the <b>cerebral cortex</b> holds only ~19% of the brain's neurons — most neurons are elsewhere (e.g., the cerebellum).</li>
+      </ul>
+      <h4>Glial cells &amp; myelin</h4>
+      <ul>
+        <li><b>Schwann cells</b> (PNS) and <b>oligodendrocytes</b> (CNS) wrap axons to form myelin segments, separated by <b>Nodes of Ranvier</b>.</li>
+        <li><b>Multiple sclerosis</b>: myelin-forming glial cells die, exposing axons and impairing sensory/motor function; oligodendrocyte/Schwann cell transplant therapy is being researched.</li>
+        <li>Older estimates put the glia-to-neuron ratio at ~10:1; newer <b>isotropic fractionation</b> counting (dissolving brain tissue to count nuclei) suggests glia and neurons are roughly <b>equal</b> overall, though ratios vary hugely by region (thalamus ~17 glia/neuron vs. cerebellum ~1 glia/25 neurons).</li>
+      </ul>
+      <h4>Neuron microstructure &amp; dendritic spines</h4>
+      <ul>
+        <li>Sherrington coined "<b>synapse</b>" in 1897 — the gap between neurons Cajal had proposed but couldn't see.</li>
+        <li><b>Dendritic spines</b> come in 3 shapes: thin (filopodia-like), stubby, and mushroom (bulbous head). They are plastic/changeable — e.g., denser in the hippocampus of pregnant rats (Kinsley et al., 2006) — and their shape changes build/modify neural circuits.</li>
+      </ul>
+      <h4>Context Matters: Bystander Stress Study (Mychasiuk, Gibb, &amp; Kolb, 2011)</h4>
+      <ul>
+        <li>Question: does <i>indirect</i> ("bystander") prenatal stress affect fetal neural development, not just direct stress?</li>
+        <li>Design: pregnant rats housed with a cage-mate stressed on an elevated platform + bright light vs. controls; dendritic length &amp; spine density measured (Golgi stain) in medial PFC, orbitofrontal cortex, dorsal hippocampus at 21 days postnatal.</li>
+        <li>Findings: no effect on pregnancy duration/litter size; orbitofrontal cortex showed ↓ dendritic length, ↑ spine density (both sexes); hippocampus showed ↑ spine density in both sexes but ↓ neuron count in <b>females only</b> — females were more affected overall.</li>
+        <li>Takeaway: mere social proximity to a stressed animal alters fetal neural architecture — external (social) and internal (intrauterine) context interact.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 8 — Synaptic Detail, Glia's Synaptic Role &amp; Seizures",
+    html: `
+      <h4>Discovery of chemical transmission</h4>
+      <ul>
+        <li><b>Otto Loewi</b> (1921): famous "dream" experiment — stimulated the vagus nerve of frog heart #1 (in solution) → slowed heart rate; transferred the solution to heart #2 → also slowed, proving a chemical ("<b>Vagusstoff</b>" = acetylcholine) was released. Dale &amp; Loewi jointly won the Nobel Prize (1936).</li>
+        <li>Electrical synapses exist too (invertebrates, cold-blooded vertebrates; transiently in developing mammalian synapses) via <b>gap junctions</b> — bidirectional, unlike one-directional chemical synapses.</li>
+      </ul>
+      <h4>Summation &amp; synaptic arrangements</h4>
+      <ul>
+        <li><b>Temporal summation</b>: rapid repeated firing at the same synapse whose effects stack before decaying. <b>Spatial summation</b>: multiple synapses at different locations combine effects. Both apply to EPSPs and IPSPs, and together determine whether ~15 mV of net change reaches threshold.</li>
+        <li>Synaptic arrangements: axodendritic, axosomatic, axoaxonic. Axoaxonic synapses can modulate release: <b>presynaptic facilitation</b> (↑ release) or <b>presynaptic inhibition</b> (↓ release).</li>
+      </ul>
+      <h4>Glial cells' role beyond myelin</h4>
+      <ul>
+        <li><b>Astrocytes</b> ensheathe synapses &amp; blood vessels, regulate extracellular K+, and have neurotransmitter receptors. Pfrieger &amp; Barres (1997): retinal neurons cultured with astrocytes showed 100× more synaptic activity. <b>Thrombospondin</b> (Christopherson et al., 2005), an astrocyte-released protein, promotes synaptogenesis. Astrocytes may also help maintain the blood–brain barrier, especially after injury.</li>
+        <li><b>Area postrema</b> (medulla) has a weak blood-brain barrier — functions as a "vomiting center" to detect toxins.</li>
+        <li>Depressed patients show ↓ gene expression for oligodendrocyte function (temporal lobes); myelin loss in the PFC is linked to depression symptoms. Oligodendrocytes secrete <b>dopa decarboxylase</b> (needed for serotonin synthesis), a possible link between oligodendrocyte loss and the serotonin theory of depression.</li>
+      </ul>
+      <h4>Seizures &amp; epilepsy</h4>
+      <ul>
+        <li><b>John Hughlings Jackson</b> (19th c.) defined seizures as abnormal synchronized neural excitation. <b>Partial seizures</b>: localized brain area. <b>Generalized seizures</b>: both hemispheres.</li>
+        <li><b>Epileptogenesis</b>: the transformation of a healthy brain into a seizure-prone brain; posttraumatic seizures are a common complication after brain injury.</li>
+        <li>Mechanisms: disrupted ionic balance, altered glial regulation, or altered NT/receptor function → hyperexcitability; excessive axon collateral growth (especially hippocampus) → over-networking → synchronized hyperactivity.</li>
+        <li>Animal models: induced via electrical stimulation or convulsant drugs (pilocarpine, kainic acid); seizures alter gene expression, strengthening excitatory networks (e.g., via BDNF, increased myelination of seizure circuits).</li>
+        <li>Treatment: (1) drugs that increase GABA (suppress excitation, enhance inhibition); (2) severing the corpus callosum (prevents spread between hemispheres); (3) surgical removal of the affected area / hemispherectomy (most severe cases).</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 9 — Neurotransmitter Systems &amp; Pharmacology Basics",
+    html: `
+      <h4>Amino acid neurotransmitters</h4>
+      <ul>
+        <li><b>Glutamate</b>: main excitatory NT in CNS; key to synaptogenesis and strengthening synapses (learning/memory) via NMDA and AMPA receptors. "Doogie mice" (Tsien, 2000) — transgenic mice with enhanced NMDA function showed better object recognition, memory, and maze-solving.</li>
+        <li><b>GABA</b> (derived from glutamate): main inhibitory NT; GABA inhibition failure → seizures, extreme cases death. Agonists (mimic/enhance): alcohol (partial agonist), muscimol (mushroom compound, causes intoxication/hallucination). Antagonists can counteract alcohol's GABA effects.</li>
+        <li><b>Glycine</b>: major inhibitory NT in brainstem &amp; spinal cord. Strychnine (antagonist) blocks glycine receptors → convulsions, cramping, respiratory problems.</li>
+      </ul>
+      <h4>Peptide &amp; other neurotransmitters</h4>
+      <ul>
+        <li>Peptide NTs are 3–40 amino acids long: <b>endorphins</b> (pain &amp; reward), <b>oxytocin &amp; vasopressin</b> (fluid regulation, social bonding).</li>
+        <li><b>Acetylcholine</b>: synthesized from acetyl coenzyme A + choline; produced in basal ganglia &amp; brainstem; functions in motor/parasympathetic (PNS) and memory/cognition (CNS). Two receptor types: nicotinic and muscarinic. Curare (poison) blocks nicotinic receptors → paralysis; botulin blocks ACh release; pilocarpine is a muscarinic agonist; scopolamine is a muscarinic antagonist.</li>
+        <li><b>Endocannabinoids</b> (e.g., anandamide): lipid-derived, made by the body, mimic cannabis effects — NOT stored in vesicles, released on-demand from the postsynaptic membrane.</li>
+        <li><b>Gaseous transmitters</b> (nitric oxide, carbon monoxide): pass directly through the cell membrane, not vesicle-stored. <b>Retrograde neurotransmitters</b> are released by the postsynaptic neuron and act on the presynaptic axon (opposite of normal transmission direction).</li>
+      </ul>
+      <h4>Agonist vs. antagonist &amp; drug evaluation concepts</h4>
+      <ul>
+        <li><b>Agonist</b>: mimics/enhances a neurotransmitter's effect. <b>Antagonist</b>: blocks/decreases a neurotransmitter's effect (partially fits the receptor, blocking the site without producing a response).</li>
+        <li>Neuropsychopharmacology aims to find drugs targeting specific NT systems; drugs can act at any stage of neurotransmission (synthesis, release, receptor binding, reuptake, breakdown).</li>
+        <li>Key terms: <b>affinity</b> (tendency to bind the target receptor), <b>efficacy</b> (ability to produce the desired effect), <b>potency</b> (effect relative to other drugs), <b>pharmacokinetics</b> (what the body does to the drug: absorption, distribution, metabolism, elimination), <b>pharmacodynamics</b> (what the drug does to the body).</li>
+        <li>Testing efficacy: <b>placebo</b> (inactive control), <b>blind</b> vs. <b>double-blind</b> studies, and the <b>placebo effect</b> (improvement from belief in treatment, not the drug itself) — antidepressant efficacy sometimes equals placebo.</li>
+      </ul>
+    `
+  },
+  {
+    title: "Lecture 10 — Psychoactive Drugs &amp; Addiction",
+    html: `
+      <h4>CNS Stimulants</h4>
+      <ul>
+        <li><b>Caffeine</b>: most widely used psychoactive drug on earth; blocks adenosine A1 &amp; A2A receptors (adenosine is inhibitory and promotes sleepiness) → increased excitatory NT release and alertness.</li>
+        <li><b>Nicotine</b>: activates nicotinic cholinergic receptors (opens Na+ channels); most nicotinic receptors are presynaptic, so nicotine alters ACh release plus other NT systems. Reward pathway: nicotinic receptors in VTA → ↑ dopaminergic firing → dopamine release in nucleus accumbens. The insula is implicated in nicotine addiction (damage from injury makes quitting easier).</li>
+        <li><b>Cocaine</b>: blocks reuptake of dopamine, norepinephrine, and serotonin (binds transporter proteins), prolonging their activity in the synapse.</li>
+        <li><b>Amphetamine</b>: indirect catecholamine agonist — blocks reuptake AND enhances presynaptic release. <b>MDMA</b>: a "messy" amphetamine derivative that is a monoamine agonist, releasing stored serotonin &amp; dopamine.</li>
+      </ul>
+      <h4>CNS Depressants: Alcohol</h4>
+      <ul>
+        <li>2nd most-used psychoactive drug (after caffeine); most abused drug overall.</li>
+        <li>Mechanism: inhibits NMDA (glutamate) receptor transmission (cognitive deficits; chronic use compensates by increasing NMDA receptors, contributing to withdrawal hyperexcitability); enhances GABA-A receptor effect (sedation/relaxation); withdrawal reduces mesolimbic dopamine firing → anhedonia.</li>
+      </ul>
+      <h4>Analgesics: Opioids</h4>
+      <ul>
+        <li>Morphine is the principal psychoactive ingredient of opium; heroin (morphine + 2 acetyl groups) is more potent when injected.</li>
+        <li>Three opioid receptor types: <b>mu</b> (analgesia, reward), <b>delta</b> (olfactory, motor, cognitive, reward), <b>kappa</b> (dysphoria, hallucinations, stress response).</li>
+        <li>Endogenous opioids (enkephalin, endorphins) reduce GABA's inhibitory effect → increased dopamine secretion. OxyContin (1996) is closely linked to the opioid epidemic; methadone engages opioid receptors similarly but blunts euphoria, reducing relapse.</li>
+      </ul>
+      <h4>Hallucinogens &amp; Cannabis</h4>
+      <ul>
+        <li><b>LSD</b>: a partial agonist at serotonin 2A (5-HT2A) receptors; also affects glutamate; produces altered emotion, hallucinations, and synesthesia.</li>
+        <li><b>Cannabis</b>: active ingredient THC acts on cannabinoid receptors (concentrated in basal ganglia, cerebellum, hippocampus, cerebral cortex). Dopaminergic neurons lack cannabinoid receptors directly, but cannabinoids reduce GABAergic inhibition of dopamine neurons → net increase in dopamine release (similar mechanism to opioids). CBD is linked to antipsychotic/anxiolytic effects, distinct from THC.</li>
+      </ul>
+    `
+  }
+];
+
+const learnSection = document.getElementById('learn');
+lectures.forEach((lec, i) => {
+  const block = document.createElement('div');
+  block.className = 'lecture-block';
+  block.innerHTML = `
+    <div class="lecture-header" data-idx="${i}">
+      <span>${lec.title}</span>
+      <span class="chevron">&#9656;</span>
+    </div>
+    <div class="lecture-body">${lec.html}</div>
+  `;
+  learnSection.appendChild(block);
+});
+learnSection.addEventListener('click', (e) => {
+  const header = e.target.closest('.lecture-header');
+  if (!header) return;
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+});
+// Open first lecture by default
+learnSection.querySelector('.lecture-header').click();
+
+/* ================= FLASHCARDS TAB ================= */
+const flashcards = [
+  { front: "Aristotle", back: "Skeptic who did NOT believe the brain controls behavior — cited headless chickens/insects still moving." },
+  { front: "Galen", back: "Physician to gladiators; first to link brain/head injury to behavioral change." },
+  { front: "Fritz & Hitzig (1870)", back: "Stimulated dog brains with electricity; established the brain is electrically excitable with regional specificity, replicable across species." },
+  { front: "Bartholow & Mary Rafferty", back: "First evidence electrical brain stimulation controls behavior in a living, awake human; contributed to the AMA banning non-consensual human experimentation." },
+  { front: "John Flynn", back: "Stimulated cat hypothalamus; different sites produced affective defense vs. quiet biting attack — complex, goal-directed behaviors, not just twitches." },
+  { front: "Wilder Penfield", back: "Stimulated awake epilepsy patients' exposed cortex; mapped sensory/motor regions and evoked specific memories/emotions." },
+  { front: "Michael Gazzaniga", back: "Split-brain research — studied patients after corpus callosotomy (severed corpus callosum), revealing hemispheric communication deficits." },
+  { front: "Contralateral", back: "Opposite side of the body/brain." },
+  { front: "Ipsilateral", back: "Same side of the body/brain." },
+  { front: "Corpus callosum", back: "Band of fibers connecting the left and right cerebral hemispheres." },
+  { front: "Soma", back: "The cell body of a neuron." },
+  { front: "Nissl stain", back: "Stains the endoplasmic reticulum; since ER is concentrated in the cell body, this effectively stains cell bodies (somas)." },
+  { front: "Hodgkin & Huxley", back: "Measured the electrical properties of the squid giant axon; won the Nobel Prize (1963) for describing the action potential." },
+  { front: "Resting potential", back: "The baseline membrane voltage of a neuron at rest, about −70 mV (inside negative relative to outside)." },
+  { front: "Action potential", back: "The stereotyped voltage spike: depolarization → repolarization → hyperpolarization → return to rest." },
+  { front: "Nernst equation", back: "Predicts the equilibrium voltage for a single freely-moving ion given its concentration inside vs. outside the membrane." },
+  { front: "Sodium-potassium pump", back: "Active transport protein that pumps 3 Na⁺ out and 2 K⁺ in per cycle, powered by ATP; maintains the negative resting potential." },
+  { front: "Threshold", back: "The membrane voltage (~−55 mV) that must be reached to trigger a full action potential." },
+  { front: "Voltage-gated channel", back: "A membrane channel that opens/closes based on membrane voltage; each type is ion-specific (e.g., Na⁺ or K⁺)." },
+  { front: "Depolarization", back: "Na⁺ influx causes the membrane voltage to rise (become less negative/more positive)." },
+  { front: "Repolarization", back: "K⁺ efflux causes the membrane voltage to fall back down toward negative." },
+  { front: "Hyperpolarization", back: "A brief overshoot below resting potential after repolarization, before the Na⁺/K⁺ pump restores balance." },
+  { front: "Refractory period", back: "~2 ms window after an action potential during which a neuron cannot fire another (channels still resetting)." },
+  { front: "All-or-none law", back: "Every action potential in a given neuron is identical in size, shape, and speed — there is no 'bigger' or 'smaller' spike." },
+  { front: "Myelin (CNS)", back: "Produced by oligodendrocytes; insulates axons and speeds conduction." },
+  { front: "Myelin (PNS)", back: "Produced by Schwann cells; insulates peripheral axons." },
+  { front: "Nodes of Ranvier", back: "Unmyelinated gaps between myelin segments where the action potential actually regenerates (saltatory conduction)." },
+  { front: "Synapse", back: "The space (cleft) between the presynaptic and postsynaptic neuron where neurotransmission occurs (~10 nm wide)." },
+  { front: "Ligand-gated channel", back: "A channel that opens when a specific molecule (ligand), such as a neurotransmitter, binds to it." },
+  { front: "EPSP", back: "Excitatory postsynaptic potential — a depolarizing response (e.g., Na⁺ influx) that moves the cell closer to threshold." },
+  { front: "IPSP", back: "Inhibitory postsynaptic potential — a hyperpolarizing response (e.g., K⁺ efflux or Cl⁻ influx) that moves the cell further from threshold." },
+  { front: "Ionotropic receptor", back: "Neurotransmitter directly opens an ion channel — fast onset, short-lived effect." },
+  { front: "Metabotropic receptor", back: "Neurotransmitter triggers a second-messenger cascade inside the cell — slower onset, but longer-lasting; can alter gene transcription." },
+  { front: "Glutamate", back: "The primary excitatory neurotransmitter in the CNS; produces EPSPs via Na⁺ influx." },
+  { front: "GABA", back: "The primary inhibitory neurotransmitter in the CNS; produces IPSPs via K⁺ efflux." },
+  { front: "Acetylcholine", back: "Neurotransmitter used at the neuromuscular junction; the first neurotransmitter discovered." },
+  { front: "Quanta", back: "Neurotransmitter is released in fixed packets (one vesicle's worth) — release is always an integer multiple of one quantum." },
+  { front: "Dale's Law", back: "Each neuron generally releases one primary type of neurotransmitter at its terminals (with some exceptions releasing a fixed ratio of multiple transmitters)." },
+  { front: "Reuptake", back: "Transporters on the presynaptic cell pull released neurotransmitter back in via endocytosis, recycling it into vesicles." },
+  { front: "Interoception", back: "The monitoring of internal body state; linked to the insula's role in voluntary autonomic control." },
+  { front: "Biofeedback", back: "Techniques that let humans consciously alter normally-involuntary functions like heart rate." },
+  { front: "Insular cortex (insula)", back: "Brain region implicated in autonomic control/interoception and in nicotine addiction (damage makes quitting easier)." },
+  { front: "CNS", back: "Central nervous system — the brain and spinal cord." },
+  { front: "PNS", back: "Peripheral nervous system — the nerves connecting the CNS to the rest of the body." },
+  { front: "Cerebellum", back: "The 'little brain'; packs in more neurons than the entire cerebrum." },
+  { front: "Glia-to-neuron ratio", back: "Newer isotropic fractionation counting shows glia and neurons are roughly equal overall (not the classic 10:1 estimate), varying widely by region." },
+  { front: "Multiple sclerosis", back: "A demyelinating disease in which myelin-forming glial cells die, exposing axons and impairing sensory/motor function." },
+  { front: "Dendritic spines", back: "Small protrusions on dendrites (thin, stubby, or mushroom-shaped) that are plastic and form the basis of most excitatory synaptic connections." },
+  { front: "Absolute refractory period", back: "The period right after an action potential when no stimulation, regardless of strength, can trigger another one." },
+  { front: "Relative refractory period", back: "The period after the absolute refractory period when a stronger-than-usual stimulus is needed to trigger an action potential." },
+  { front: "Otto Loewi", back: "Performed the 1921 frog-heart 'dream' experiment proving chemical synaptic transmission; shared the 1936 Nobel Prize with Henry Dale." },
+  { front: "Vagusstoff", back: "Loewi's name for the chemical (later identified as acetylcholine) released by vagus nerve stimulation." },
+  { front: "Temporal summation", back: "Rapid repeated firing at the same synapse whose postsynaptic effects stack before decaying." },
+  { front: "Spatial summation", back: "Combining postsynaptic potentials from multiple synapses at different locations." },
+  { front: "Presynaptic facilitation", back: "An axoaxonic synapse effect that increases neurotransmitter release." },
+  { front: "Presynaptic inhibition", back: "An axoaxonic synapse effect that decreases neurotransmitter release." },
+  { front: "Astrocytes", back: "Glial cells that ensheathe synapses/blood vessels, regulate extracellular K+, and promote synaptogenesis (e.g., via thrombospondin)." },
+  { front: "Epileptogenesis", back: "The process by which a healthy brain transforms into a seizure-prone brain." },
+  { front: "Gap junctions", back: "Direct, bidirectional electrical synapses formed by aligned connexons between two neurons." },
+  { front: "Glycine", back: "The major inhibitory neurotransmitter in the brainstem and spinal cord; blocked by the poison strychnine." },
+  { front: "Agonist", back: "A substance that mimics or enhances a neurotransmitter's effect at its receptor." },
+  { front: "Antagonist", back: "A substance that blocks or decreases a neurotransmitter's effect at its receptor." },
+  { front: "Affinity", back: "A drug's tendency to bind closely to its target receptor." },
+  { front: "Efficacy", back: "A drug's ability to produce the desired effect for a condition." },
+  { front: "Potency", back: "A drug's ability to induce an effect relative to other drugs." },
+  { front: "Pharmacokinetics", back: "What the body does to a drug — absorption, distribution, metabolism, elimination." },
+  { front: "Pharmacodynamics", back: "What a drug does to the body — its effects and mechanisms." },
+  { front: "Placebo effect", back: "Improvement due to belief in a treatment, not the treatment itself." },
+  { front: "Endocannabinoids", back: "Lipid-derived transmitters (e.g., anandamide) made on-demand and not stored in vesicles." },
+  { front: "Retrograde neurotransmitter", back: "A neurotransmitter released by the postsynaptic neuron that acts back on the presynaptic axon." },
+  { front: "Opioid receptors", back: "Mu, delta, and kappa receptors that respond to endogenous opioids (endorphins, enkephalins) and drugs like morphine." },
+  { front: "THC", back: "δ-9-tetrahydrocannabinol — the active psychoactive ingredient in cannabis; acts on cannabinoid receptors." },
+  { front: "Doogie mice", back: "Tsien (2000) transgenic mice with enhanced NMDA receptor function showed better object recognition, memory, and maze-solving." },
+  { front: "Curare", back: "A poison that blocks nicotinic acetylcholine receptors at the neuromuscular junction, causing paralysis." },
+  { front: "Bystander stress study (Mychasiuk et al., 2011)", back: "Indirect prenatal stress (a stressed cage-mate) altered dendritic length/spine density in rat offspring brains, with females more affected than males." }
+];
+
+let fcOrder = flashcards.map((_, i) => i);
+let fcIndex = 0;
+let fcFlipped = false;
+
+const fcCard = document.getElementById('fc-card');
+const fcFront = document.getElementById('fc-front-text');
+const fcBack = document.getElementById('fc-back-text');
+const fcCounter = document.getElementById('fc-counter');
+const fcPrevBtn = document.getElementById('fc-prev');
+const fcNextBtn = document.getElementById('fc-next');
+
+function renderFlashcard() {
+  const card = flashcards[fcOrder[fcIndex]];
+  fcFront.textContent = card.front;
+  fcBack.textContent = card.back;
+  fcCounter.textContent = `Card ${fcIndex + 1} / ${flashcards.length}`;
+  fcCard.classList.remove('flipped');
+  fcFlipped = false;
+  fcPrevBtn.disabled = fcIndex === 0;
+  fcNextBtn.disabled = fcIndex === flashcards.length - 1;
+}
+
+fcCard.addEventListener('click', () => {
+  fcFlipped = !fcFlipped;
+  fcCard.classList.toggle('flipped', fcFlipped);
+});
+document.getElementById('fc-flip').addEventListener('click', () => fcCard.click());
+fcPrevBtn.addEventListener('click', () => { if (fcIndex > 0) { fcIndex--; renderFlashcard(); } });
+fcNextBtn.addEventListener('click', () => { if (fcIndex < flashcards.length - 1) { fcIndex++; renderFlashcard(); } });
+document.getElementById('shuffle-btn').addEventListener('click', () => {
+  for (let i = fcOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcOrder[i], fcOrder[j]] = [fcOrder[j], fcOrder[i]];
+  }
+  fcIndex = 0;
+  renderFlashcard();
+});
+renderFlashcard();
+
+/* ================= QUIZ TAB ================= */
+const questions = [
+  { q: "Which historical figure did NOT believe the brain controls behavior, citing the fact that a chicken can still run after decapitation?",
+    options: { a: "Galen", b: "Aristotle", c: "Fritz & Hitzig", d: "Bartholow", e: "none or all of these" }, correct: "b",
+    explanation: "Aristotle was a skeptic of brain control over behavior, using decapitated chickens and headless insects as evidence." },
+  { q: "Galen's key contribution to linking brain and behavior came from his experience as:",
+    options: { a: "an anatomist dissecting cadavers", b: "a physician to gladiators", c: "a neurosurgeon", d: "a psychologist", e: "none or all of these" }, correct: "b",
+    explanation: "Galen treated gladiators and observed that patients behaved differently after head/brain injuries — the first evidence linking brain damage to behavioral change." },
+  { q: "Fritz & Hitzig's 1870 experiments on dogs established all of the following EXCEPT:",
+    options: { a: "the brain is electrically excitable", b: "there is regional specificity of brain function", c: "results were replicable across species", d: "stimulation can evoke specific autobiographical memories", e: "none of these" }, correct: "d",
+    explanation: "Evoking specific memories was a Penfield finding decades later, not a Fritz & Hitzig conclusion." },
+  { q: "In Fritz & Hitzig's dog experiments, stimulating the middle region of the brain produced:",
+    options: { a: "no observable response", b: "contralateral muscle movement", c: "flashes of light", d: "hearing sounds", e: "none of these" }, correct: "b",
+    explanation: "Stimulating the middle region caused contralateral flinching/movement (e.g., right brain stim → left body movement)." },
+  { q: "Bartholow's experiments on patient Mary Rafferty were significant because they demonstrated electrical brain stimulation controlling behavior:",
+    options: { a: "only in anesthetized animals", b: "in a living, awake human who could report experience", c: "only in insects", d: "using diffusion tensor imaging", e: "none of these" }, correct: "b",
+    explanation: "Rafferty was awake and could report her experience; she could not consciously override an arm movement triggered by stimulation." },
+  { q: "The public backlash from the Bartholow/Rafferty case contributed to:",
+    options: { a: "the invention of the EEG", b: "the AMA banning human experimentation that disregards patient welfare/consent", c: "the discovery of the resting potential", d: "the use of squid giant axons in research", e: "none of these" }, correct: "b",
+    explanation: "Rafferty died days later; the resulting backlash contributed to the AMA banning unethical human experimentation." },
+  { q: "John Flynn's cat stimulation studies (~1950s) focused on which brain structure?",
+    options: { a: "corpus callosum", b: "hypothalamus", c: "cerebellum", d: "hippocampus", e: "none of these" }, correct: "b",
+    explanation: "Flynn implanted electrodes in the hypothalamus, a deep midline structure, to elicit affective defense or quiet biting attack behaviors." },
+  { q: "In Flynn's cats, stimulation of one hypothalamic site produced 'quiet biting attack,' characterized by:",
+    options: { a: "arched back, piloerection, hissing", b: "stalking, sneaking, and pouncing without vocalization", c: "flashes of light", d: "arm movement", e: "none of these" }, correct: "b",
+    explanation: "Quiet biting attack was a predatory behavior pattern (stalk/sneak/pounce), distinct from the vocal 'affective defense' behavior from a different site." },
+  { q: "Wilder Penfield's stimulation studies were conducted primarily on patients with:",
+    options: { a: "schizophrenia", b: "epilepsy", c: "multiple sclerosis", d: "split brains", e: "none of these" }, correct: "b",
+    explanation: "Penfield worked with awake epilepsy patients during exposed-cortex surgery, since the brain lacks pain receptors." },
+  { q: "Penfield's cortical stimulation sometimes evoked, beyond simple sensory or motor responses:",
+    options: { a: "only muscle twitches", b: "specific memories and emotions", c: "changes in resting potential", d: "immediate seizures", e: "none of these" }, correct: "b",
+    explanation: "Some stimulation evoked specific memories (e.g., a woman recalling standing at her kitchen sink) and associated emotions." },
+  { q: "Michael Gazzaniga's split-brain research involved surgically severing the:",
+    options: { a: "optic chiasm", b: "corpus callosum", c: "spinal cord", d: "hypothalamus", e: "none of these" }, correct: "b",
+    explanation: "Corpus callosotomy — severing the corpus callosum — was performed to treat intractable epilepsy and revealed hemispheric communication deficits." },
+  { q: "In split-brain research, information flashed to a patient's left visual field is initially processed by the:",
+    options: { a: "left hemisphere", b: "right hemisphere", c: "cerebellum", d: "brainstem", e: "none of these" }, correct: "b",
+    explanation: "The right hemisphere controls/processes the left visual field; since it's usually not language-dominant, patients often can't verbally report this info." },
+  { q: "In the split-brain 'girlfriend' case (patient P.S.), the patient could not say his crush's name aloud but could:",
+    options: { a: "draw her face", b: "spell 'Liz' using Scrabble tiles", c: "describe her voice", d: "recall her birthday verbally", e: "none of these" }, correct: "b",
+    explanation: "This showed some right-hemisphere language capacity exists via non-verbal channels (e.g., spelling) even without speech access." },
+  { q: "The Nissl stain is especially useful for viewing which cellular structure under a light microscope?",
+    options: { a: "axons", b: "myelin", c: "cell somas", d: "dendrites only", e: "none of these" }, correct: "c",
+    explanation: "Nissl stains the endoplasmic reticulum, which is concentrated in the cell body, making it effectively a cell body (soma) stain." },
+  { q: "Hodgkin & Huxley chose the squid giant axon for their experiments primarily because:",
+    options: { a: "squids are easy to obtain", b: "its large diameter makes it easy to place electrodes in/around", c: "it is myelinated", d: "it fires action potentials faster than any known axon", e: "none of these" }, correct: "b",
+    explanation: "The squid giant axon (~1mm diameter) is large enough for electrodes to be placed inside and outside — a practical necessity for recording." },
+  { q: "When Hodgkin & Huxley placed one electrode inside a resting (unstimulated) axon and one outside, they recorded a voltage of about:",
+    options: { a: "0 mV", b: "+57 mV", c: "-70 mV", d: "-78 mV", e: "none of these" }, correct: "c",
+    explanation: "This is the resting potential — the first demonstration of a stable electrical difference across the resting membrane." },
+  { q: "According to the Nernst equation, which ion's predicted equilibrium potential most closely matches the peak of the action potential (~+57 mV)?",
+    options: { a: "potassium", b: "chloride", c: "sodium", d: "calcium", e: "none of these" }, correct: "c",
+    explanation: "Sodium's Nernst-predicted equilibrium potential (~+57 mV) matches the action potential's peak, consistent with Na+ influx driving depolarization." },
+  { q: "The sodium-potassium pump moves ions across the membrane in which ratio per cycle?",
+    options: { a: "2 Na+ out, 3 K+ in", b: "3 Na+ out, 2 K+ in", c: "equal Na+ and K+ in both directions", d: "1 Na+ out, 1 K+ in", e: "none of these" }, correct: "b",
+    explanation: "Each pump cycle moves 3 Na+ out and 2 K+ in, removing more positive charge than it brings in and helping maintain the negative resting potential." },
+  { q: "Depolarization of a neuron's membrane during an action potential is caused by:",
+    options: { a: "K+ efflux", b: "Cl- influx", c: "Na+ influx", d: "closure of all channels", e: "none of these" }, correct: "c",
+    explanation: "Voltage-gated Na+ channels open at threshold, and Na+ rushes in (following both concentration and electrical gradients), depolarizing the cell." },
+  { q: "The refractory period, caused by hyperpolarization, primarily functions to prevent action potentials from:",
+    options: { a: "ever occurring twice in the same neuron", b: "propagating backward down the axon", c: "being all-or-none", d: "reaching threshold under any condition", e: "none of these" }, correct: "b",
+    explanation: "Because the just-fired segment is briefly hyperpolarized/resetting, the signal cannot travel backward — it only regenerates forward into 'fresh' axon." },
+  { q: "In the peripheral nervous system, axons are myelinated by:",
+    options: { a: "oligodendrocytes", b: "astrocytes", c: "Schwann cells", d: "microglia", e: "none of these" }, correct: "c",
+    explanation: "Schwann cells myelinate PNS axons; oligodendrocytes perform this role in the CNS." },
+  { q: "At the Nodes of Ranvier:",
+    options: { a: "no action potential can occur", b: "the axon is fully myelinated", c: "the action potential regenerates", d: "neurotransmitter is released", e: "none of these" }, correct: "c",
+    explanation: "Nodes of Ranvier are unmyelinated gaps where full action potentials regenerate, enabling fast saltatory conduction." },
+  { q: "An action potential's arrival at the axon terminal triggers the opening of voltage-gated:",
+    options: { a: "sodium channels", b: "potassium channels", c: "calcium channels", d: "chloride channels", e: "none of these" }, correct: "c",
+    explanation: "Voltage-gated Ca2+ channels open at the terminal; Ca2+ influx triggers vesicle docking and neurotransmitter exocytosis." },
+  { q: "Which ion movement at a postsynaptic receptor would produce an EPSP (excitatory postsynaptic potential)?",
+    options: { a: "K+ efflux", b: "Cl- influx", c: "Na+ influx", d: "simultaneous Na+ influx and K+ efflux", e: "none of these" }, correct: "c",
+    explanation: "Na+ influx depolarizes the postsynaptic cell, moving it closer to threshold — this is an EPSP." },
+  { q: "Glutamate is the primary neurotransmitter associated with:",
+    options: { a: "inhibition via K+ efflux", b: "excitation via Na+ influx", c: "neuromuscular junctions", d: "metabotropic-only signaling", e: "none of these" }, correct: "b",
+    explanation: "Glutamate is the main excitatory CNS neurotransmitter, producing EPSPs via Na+ influx; GABA is the main inhibitory counterpart." },
+  { q: "According to Dale's Law, each neuron generally:",
+    options: { a: "releases a different transmitter at each terminal", b: "releases one primary type of neurotransmitter at its terminals", c: "cannot release peptides", d: "only uses ionotropic receptors", e: "none of these" }, correct: "b",
+    explanation: "Neurons are typically characterized by one primary neurotransmitter (e.g., serotonergic, dopaminergic), though some release a fixed ratio of multiple transmitters." },
+  { q: "Neurotransmitters are released from the presynaptic terminal in fixed packets known as:",
+    options: { a: "vesicles only", b: "quanta", c: "ligands", d: "synapses", e: "none of these" }, correct: "b",
+    explanation: "Release always occurs in integer multiples of a quantum (one vesicle's worth), never a fractional amount." },
+  { q: "Compared to ionotropic receptors, metabotropic receptors are:",
+    options: { a: "faster and shorter-lived", b: "slower to onset but longer-lasting, sometimes altering gene transcription", c: "only found in the peripheral nervous system", d: "incapable of triggering second messengers", e: "none of these" }, correct: "b",
+    explanation: "Metabotropic receptors trigger second-messenger cascades inside the cell — slower onset, but effects can last minutes to days and support learning/memory." },
+  { q: "What are the two major divisions of the nervous system?",
+    options: { a: "CNS and PNS", b: "Sympathetic and parasympathetic", c: "Afferent and efferent", d: "Somatic and reflexive", e: "none of these" }, correct: "a",
+    explanation: "The CNS (brain and spinal cord) and PNS (nerves connecting the CNS to the rest of the body) are the two major divisions." },
+  { q: "Which brain structure is proposed as key to voluntary control of autonomic functions via interoception (relevant to magician David Blaine's feats)?",
+    options: { a: "Cerebellum", b: "Hippocampus", c: "Insular cortex", d: "Amygdala", e: "none of these" }, correct: "c",
+    explanation: "The insula monitors internal body state (interoception) and is proposed as key to consciously influencing normally-autonomic functions." },
+  { q: "Which glial cells form myelin in the peripheral nervous system and can also help regenerate damaged axons?",
+    options: { a: "Oligodendrocytes", b: "Schwann cells", c: "Astrocytes", d: "Microglia", e: "none of these" }, correct: "b",
+    explanation: "Schwann cells myelinate PNS axons and can support axon regeneration; CNS regeneration is generally much more limited." },
+  { q: "Newer 'isotropic fractionation' cell-counting methods suggest the overall ratio of glia to neurons in the brain is approximately:",
+    options: { a: "10 glia per 1 neuron, as classically believed", b: "roughly equal (about 1:1)", c: "100 glia per 1 neuron", d: "there are no glia in the cerebellum", e: "none of these" }, correct: "b",
+    explanation: "Isotropic fractionation counting suggests glia and neurons are roughly equal overall, though the ratio varies hugely by region." },
+  { q: "Despite common assumptions, what percentage of the brain's total neurons are actually found in the cerebral cortex?",
+    options: { a: "~99%", b: "~85%", c: "~50%", d: "~19%", e: "none of these" }, correct: "d",
+    explanation: "Only about 19% of the brain's neurons are in the cerebral cortex — most are found elsewhere, notably the cerebellum." },
+  { q: "Dendritic spines come in three general shapes. Which of the following is NOT one of them?",
+    options: { a: "thin (filopodia-like)", b: "stubby", c: "mushroom", d: "branched-fork", e: "none of these" }, correct: "d",
+    explanation: "The three classic dendritic spine shapes are thin, stubby, and mushroom." },
+  { q: "In the 'bystander stress' study (Mychasiuk, Gibb, & Kolb, 2011), indirect prenatal stress (a stressed cage-mate) in rats was shown to:",
+    options: { a: "have no measurable effect on offspring", b: "alter dendritic length and spine density in offspring brains, with females more affected", c: "only affect litter size", d: "only affect male offspring", e: "none of these" }, correct: "b",
+    explanation: "Mere social proximity to a stressed cage-mate altered offspring neural architecture, and females were more affected overall than males." },
+  { q: "The absolute refractory period differs from the relative refractory period in that during the absolute refractory period:",
+    options: { a: "only a weaker-than-usual stimulus can trigger an action potential", b: "no stimulation, regardless of strength, can trigger another action potential", c: "the neuron fires continuously", d: "the neuron is permanently hyperpolarized", e: "none of these" }, correct: "b",
+    explanation: "In the absolute refractory period no stimulus can trigger a new AP; in the relative refractory period, a stronger-than-usual stimulus is needed." },
+  { q: "Otto Loewi's famous 1921 'dream' experiment demonstrated chemical synaptic transmission using:",
+    options: { a: "squid giant axons", b: "frog hearts", c: "rat hippocampal slices", d: "cat hypothalamus", e: "none of these" }, correct: "b",
+    explanation: "Loewi transferred solution from a stimulated frog heart to a second frog heart, showing a chemical (later identified as acetylcholine) caused the effect." },
+  { q: "Loewi originally referred to the substance released by vagus nerve stimulation (later identified as acetylcholine) as:",
+    options: { a: "'Neurohumor'", b: "'Synaptin'", c: "'Vagusstoff'", d: "'Excitatory factor'", e: "none of these" }, correct: "c",
+    explanation: "Loewi called it 'Vagusstoff' before it was later identified as acetylcholine." },
+  { q: "Temporal summation refers to:",
+    options: { a: "combining inputs from many different synapses at different locations", b: "rapid repeated firing at the same synapse whose effects stack before decaying", c: "the refractory period after an action potential", d: "neurotransmitter reuptake", e: "none of these" }, correct: "b",
+    explanation: "Temporal summation is repeated firing at one synapse whose postsynaptic effects add up before they decay." },
+  { q: "An axoaxonic synapse that decreases neurotransmitter release from the target axon terminal is called:",
+    options: { a: "presynaptic facilitation", b: "postsynaptic inhibition", c: "presynaptic inhibition", d: "temporal summation", e: "none of these" }, correct: "c",
+    explanation: "Presynaptic inhibition, mediated by an axoaxonic synapse, decreases neurotransmitter release from the target terminal." },
+  { q: "Pfrieger & Barres (1997) found that retinal neurons cultured WITH astrocytes showed:",
+    options: { a: "no change in synaptic activity", b: "complete loss of synaptic activity", c: "100x more synaptic activity", d: "increased seizure activity only", e: "none of these" }, correct: "c",
+    explanation: "Astrocyte co-culture increased synaptic activity roughly 100-fold compared to neurons cultured without astrocytes." },
+  { q: "Epileptogenesis refers to:",
+    options: { a: "the treatment of seizures with GABA-enhancing drugs", b: "the transformation of a healthy brain into a seizure-prone brain", c: "the initial single trigger of any one seizure", d: "normal brain development in infancy", e: "none of these" }, correct: "b",
+    explanation: "Epileptogenesis describes the underlying process by which a brain becomes prone to recurring seizures." },
+  { q: "A generalized seizure, compared to a partial seizure, involves:",
+    options: { a: "only one localized brain area", b: "both hemispheres", c: "only the spinal cord", d: "only the cerebellum", e: "none of these" }, correct: "b",
+    explanation: "Partial seizures are localized to one area; generalized seizures involve both hemispheres." },
+  { q: "Most anti-seizure drugs work primarily by:",
+    options: { a: "increasing glutamate (excitatory) activity", b: "blocking all myelin formation", c: "increasing GABA (inhibitory) activity", d: "increasing dopamine release", e: "none of these" }, correct: "c",
+    explanation: "Enhancing GABA's inhibitory effect suppresses the excessive excitation underlying seizures." },
+  { q: "In the 'Doogie mice' experiment (Tsien, 2000), enhancing which receptor's function improved memory and maze-solving?",
+    options: { a: "GABA-A receptor", b: "Opioid receptor", c: "Nicotinic receptor", d: "NMDA receptor", e: "none of these" }, correct: "d",
+    explanation: "Enhanced NMDA (glutamate) receptor function improved object recognition, memory, and maze-solving in these transgenic mice." },
+  { q: "Which neurotransmitter is the major inhibitory transmitter in the brainstem and spinal cord, and is blocked by the poison strychnine?",
+    options: { a: "GABA", b: "Glutamate", c: "Acetylcholine", d: "Glycine", e: "none of these" }, correct: "d",
+    explanation: "Glycine is the main inhibitory NT in the brainstem/spinal cord; strychnine blocks its receptors, causing convulsions." },
+  { q: "Which poison blocks nicotinic acetylcholine receptors at the neuromuscular junction, causing paralysis?",
+    options: { a: "Botulin", b: "Curare", c: "Strychnine", d: "Muscimol", e: "none of these" }, correct: "b",
+    explanation: "Curare blocks nicotinic ACh receptors at the neuromuscular junction, preventing muscle activation." },
+  { q: "What makes endocannabinoids unusual compared to typical neurotransmitters like glutamate or GABA?",
+    options: { a: "They can only act on ionotropic receptors", b: "They are only found in the peripheral nervous system", c: "They are not stored in vesicles and are released on demand", d: "They cannot cross the synaptic cleft", e: "none of these" }, correct: "c",
+    explanation: "Endocannabinoids are lipid-derived and synthesized/released on demand from the postsynaptic membrane rather than stored in vesicles." },
+  { q: "A 'retrograde neurotransmitter' is one that:",
+    options: { a: "travels from the spinal cord to the brain", b: "is released by the postsynaptic neuron and acts back on the presynaptic axon", c: "is recycled from the cleft back into the axon terminal", d: "only functions during prenatal development", e: "none of these" }, correct: "b",
+    explanation: "Retrograde neurotransmitters reverse the usual direction of signaling, going from postsynaptic back to presynaptic." },
+  { q: "In pharmacology, a drug's 'affinity' refers to:",
+    options: { a: "its ability to produce the desired therapeutic effect", b: "its tendency to bind closely to its target receptor", c: "its ability to induce an effect relative to other drugs", d: "how quickly it is eliminated from the body", e: "none of these" }, correct: "b",
+    explanation: "Affinity is how tightly a drug binds its target receptor, distinct from efficacy (effect produced) or potency (relative strength)." },
+  { q: "'Pharmacokinetics' refers to:",
+    options: { a: "what the drug does to the body (its effects and mechanisms)", b: "what the body does to the drug (absorption, distribution, metabolism, elimination)", c: "only how a drug is administered", d: "only a drug's side effects", e: "none of these" }, correct: "b",
+    explanation: "Pharmacokinetics covers absorption, distribution, metabolism, and elimination; pharmacodynamics covers the drug's effects on the body." },
+  { q: "In a double-blind study:",
+    options: { a: "only the patients don't know their group assignment", b: "only the researchers don't know group assignments", c: "neither patients nor researchers know group assignments", d: "there is no control group", e: "none of these" }, correct: "c",
+    explanation: "Double-blind studies conceal group assignment from both patients and researchers to reduce bias." },
+  { q: "Caffeine, the most widely used psychoactive drug on earth, produces alertness mainly by:",
+    options: { a: "blocking dopamine reuptake", b: "enhancing GABA-A receptors", c: "blocking adenosine A1 & A2A receptors", d: "activating opioid receptors", e: "none of these" }, correct: "c",
+    explanation: "Caffeine blocks inhibitory adenosine receptors, which normally suppress excitatory neurotransmission and promote sleepiness." },
+  { q: "Cocaine's primary mechanism of action is to:",
+    options: { a: "enhance GABA transmission", b: "block reuptake of dopamine, norepinephrine, and serotonin", c: "activate nicotinic receptors", d: "block NMDA receptors", e: "none of these" }, correct: "b",
+    explanation: "Cocaine binds monoamine transporter proteins, blocking reuptake and prolonging these neurotransmitters' activity in the synapse." },
+  { q: "Nicotine produces its effects primarily by activating:",
+    options: { a: "muscarinic receptors", b: "opioid mu receptors", c: "nicotinic cholinergic receptors", d: "serotonin 5-HT2A receptors", e: "none of these" }, correct: "c",
+    explanation: "Nicotine directly activates nicotinic cholinergic receptors, most of which are presynaptic, altering ACh and other NT release." },
+  { q: "Alcohol affects the brain through which two main neurotransmitter mechanisms?",
+    options: { a: "blocking GABA and enhancing NMDA", b: "enhancing GABA-A receptors and inhibiting NMDA (glutamate) receptors", c: "blocking dopamine and enhancing serotonin", d: "enhancing acetylcholine and blocking glycine", e: "none of these" }, correct: "b",
+    explanation: "Alcohol enhances inhibitory GABA-A signaling and inhibits excitatory NMDA glutamate signaling, producing its depressant effects." },
+  { q: "The three main types of opioid receptors are:",
+    options: { a: "alpha, beta, gamma", b: "A1, A2, A3", c: "NMDA, AMPA, kainate", d: "mu, delta, kappa", e: "none of these" }, correct: "d",
+    explanation: "Mu, delta, and kappa are the three classic opioid receptor types, each with distinct locations and functions." },
+  { q: "LSD's mechanism of action is best described as:",
+    options: { a: "a GABA-A receptor agonist", b: "an opioid receptor agonist", c: "a partial agonist at serotonin 2A (5-HT2A) receptors", d: "a full antagonist at dopamine receptors", e: "none of these" }, correct: "c",
+    explanation: "LSD partially activates 5-HT2A serotonin receptors, disrupting sensory filtering and producing hallucinations." },
+  { q: "Cannabis increases dopamine release even though dopaminergic neurons lack cannabinoid receptors directly. This happens because cannabinoids:",
+    options: { a: "directly bind dopamine receptors", b: "block dopamine reuptake transporters", c: "inhibit GABAergic inhibition of dopamine neurons (disinhibition)", d: "increase dopamine synthesis enzymes", e: "none of these" }, correct: "c",
+    explanation: "Cannabinoids reduce GABAergic inhibition of dopamine neurons, producing a net increase in dopamine release — a mechanism similar to opioids." }
+];
+
+let selectedAnswers = {};
+const quizEl = document.getElementById('quiz-questions');
+const progressFill = document.getElementById('progress-fill');
+
+function renderQuiz() {
+  quizEl.innerHTML = '';
+  questions.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+      <div class="q-number">Question ${idx + 1}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="options" data-idx="${idx}">
+        ${Object.entries(item.options).map(([key, val]) => `
+          <label data-key="${key}">
+            <input type="radio" name="q${idx}" value="${key}">
+            ${key}. ${val}
+          </label>
+        `).join('')}
+      </div>
+      <div class="explanation" id="exp-${idx}">${item.explanation}</div>
+    `;
+    quizEl.appendChild(card);
+  });
+  quizEl.addEventListener('change', (e) => {
+    if (e.target.type === 'radio') {
+      const idx = e.target.name.replace('q', '');
+      selectedAnswers[idx] = e.target.value;
+      updateProgress();
+    }
+  });
+}
+
+function updateProgress() {
+  const answered = Object.keys(selectedAnswers).length;
+  progressFill.style.width = (answered / questions.length * 100) + '%';
+}
+
+document.getElementById('submit-btn').addEventListener('click', () => {
+  let score = 0;
+  questions.forEach((item, idx) => {
+    const optionsDiv = document.querySelector(`.options[data-idx="${idx}"]`);
+    const labels = optionsDiv.querySelectorAll('label');
+    const chosen = selectedAnswers[idx];
+    labels.forEach(label => {
+      const key = label.dataset.key;
+      label.querySelector('input').disabled = true;
+      if (key === item.correct) label.classList.add('correct');
+      else if (key === chosen && chosen !== item.correct) label.classList.add('incorrect');
+    });
+    document.getElementById(`exp-${idx}`).classList.add('show');
+    if (chosen === item.correct) score++;
+  });
+
+  const total = questions.length;
+  document.getElementById('score-num').textContent = `${score} / ${total}`;
+  const pct = Math.round(score / total * 100);
+  let msg = '';
+  if (pct >= 90) msg = 'Excellent work!';
+  else if (pct >= 75) msg = 'Solid grasp of the material.';
+  else if (pct >= 60) msg = 'Good start — review the missed topics.';
+  else msg = 'Review the lecture notes and try again.';
+  document.getElementById('score-msg').textContent = `${pct}% — ${msg}`;
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('submit-btn').style.display = 'none';
+  document.getElementById('quiz').scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('retry-btn').addEventListener('click', () => {
+  selectedAnswers = {};
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('submit-btn').style.display = 'block';
+  progressFill.style.width = '0%';
+  renderQuiz();
+});
+
+renderQuiz();
+</script>
+</body>
+</html>
