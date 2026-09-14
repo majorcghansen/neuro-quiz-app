@@ -1,0 +1,94 @@
+Aristotle	Skeptic who did NOT believe the brain controls behavior — cited headless chickens/insects still moving.
+Galen	Physician to gladiators; first to link brain/head injury to behavioral change.
+Fritz & Hitzig (1870)	Stimulated dog brains with electricity; established the brain is electrically excitable with regional specificity, replicable across species.
+Bartholow & Mary Rafferty	First evidence electrical brain stimulation controls behavior in a living, awake human; contributed to the AMA banning non-consensual human experimentation.
+John Flynn	Stimulated cat hypothalamus; different sites produced affective defense vs. quiet biting attack — complex, goal-directed behaviors, not just twitches.
+Wilder Penfield	Stimulated awake epilepsy patients' exposed cortex; mapped sensory/motor regions and evoked specific memories/emotions.
+Michael Gazzaniga	Split-brain research — studied patients after corpus callosotomy (severed corpus callosum), revealing hemispheric communication deficits.
+Contralateral	Opposite side of the body/brain.
+Ipsilateral	Same side of the body/brain.
+Corpus callosum	Band of fibers connecting the left and right cerebral hemispheres.
+Soma	The cell body of a neuron.
+Nissl stain	Stains the endoplasmic reticulum; since ER is concentrated in the cell body, this effectively stains cell bodies (somas).
+Hodgkin & Huxley	Measured the electrical properties of the squid giant axon; won the Nobel Prize (1963) for describing the action potential.
+Resting potential	The baseline membrane voltage of a neuron at rest, about −70 mV (inside negative relative to outside).
+Action potential	The stereotyped voltage spike: depolarization → repolarization → hyperpolarization → return to rest.
+Nernst equation	Predicts the equilibrium voltage for a single freely-moving ion given its concentration inside vs. outside the membrane.
+Sodium-potassium pump	Active transport protein that pumps 3 Na⁺ out and 2 K⁺ in per cycle, powered by ATP; maintains the negative resting potential.
+Threshold	The membrane voltage (~−55 mV) that must be reached to trigger a full action potential.
+Voltage-gated channel	A membrane channel that opens/closes based on membrane voltage; each type is ion-specific (e.g., Na⁺ or K⁺).
+Depolarization	Na⁺ influx causes the membrane voltage to rise (become less negative/more positive).
+Repolarization	K⁺ efflux causes the membrane voltage to fall back down toward negative.
+Hyperpolarization	A brief overshoot below resting potential after repolarization, before the Na⁺/K⁺ pump restores balance.
+Refractory period	~2 ms window after an action potential during which a neuron cannot fire another (channels still resetting).
+All-or-none law	Every action potential in a given neuron is identical in size, shape, and speed — there is no 'bigger' or 'smaller' spike.
+Myelin (CNS)	Produced by oligodendrocytes; insulates axons and speeds conduction.
+Myelin (PNS)	Produced by Schwann cells; insulates peripheral axons.
+Nodes of Ranvier	Unmyelinated gaps between myelin segments where the action potential actually regenerates (saltatory conduction).
+Synapse	The space (cleft) between the presynaptic and postsynaptic neuron where neurotransmission occurs (~10 nm wide).
+Ligand-gated channel	A channel that opens when a specific molecule (ligand), such as a neurotransmitter, binds to it.
+EPSP	Excitatory postsynaptic potential — a depolarizing response (e.g., Na⁺ influx) that moves the cell closer to threshold.
+IPSP	Inhibitory postsynaptic potential — a hyperpolarizing response (e.g., K⁺ efflux or Cl⁻ influx) that moves the cell further from threshold.
+Ionotropic receptor	Neurotransmitter directly opens an ion channel — fast onset, short-lived effect.
+Metabotropic receptor	Neurotransmitter triggers a second-messenger cascade inside the cell — slower onset, but longer-lasting; can alter gene transcription.
+Glutamate	The primary excitatory neurotransmitter in the CNS; produces EPSPs via Na⁺ influx.
+GABA	The primary inhibitory neurotransmitter in the CNS; produces IPSPs via K⁺ efflux.
+Acetylcholine	Neurotransmitter used at the neuromuscular junction; the first neurotransmitter discovered.
+Quanta	Neurotransmitter is released in fixed packets (one vesicle's worth) — release is always an integer multiple of one quantum.
+Dale's Law	Each neuron generally releases one primary type of neurotransmitter at its terminals (with some exceptions releasing a fixed ratio of multiple transmitters).
+Reuptake	Transporters on the presynaptic cell pull released neurotransmitter back in via endocytosis, recycling it into vesicles.
+Interoception	The monitoring of internal body state; linked to the insula's role in voluntary autonomic control.
+Biofeedback	Techniques that let humans consciously alter normally-involuntary functions like heart rate.
+Insular cortex (insula)	Brain region implicated in autonomic control/interoception and in nicotine addiction (damage makes quitting easier).
+CNS	Central nervous system — the brain and spinal cord.
+PNS	Peripheral nervous system — the nerves connecting the CNS to the rest of the body.
+Cerebellum	The 'little brain'; packs in more neurons than the entire cerebrum.
+Glia-to-neuron ratio	Newer isotropic fractionation counting shows glia and neurons are roughly equal overall (not the classic 10:1 estimate), varying widely by region.
+Multiple sclerosis	A demyelinating disease in which myelin-forming glial cells die, exposing axons and impairing sensory/motor function.
+Dendritic spines	Small protrusions on dendrites (thin, stubby, or mushroom-shaped) that are plastic and form the basis of most excitatory synaptic connections.
+Absolute refractory period	The period right after an action potential when no stimulation, regardless of strength, can trigger another one.
+Relative refractory period	The period after the absolute refractory period when a stronger-than-usual stimulus is needed to trigger an action potential.
+Otto Loewi	Performed the 1921 frog-heart 'dream' experiment proving chemical synaptic transmission; shared the 1936 Nobel Prize with Henry Dale.
+Vagusstoff	Loewi's name for the chemical (later identified as acetylcholine) released by vagus nerve stimulation.
+Temporal summation	Rapid repeated firing at the same synapse whose postsynaptic effects stack before decaying.
+Spatial summation	Combining postsynaptic potentials from multiple synapses at different locations.
+Presynaptic facilitation	An axoaxonic synapse effect that increases neurotransmitter release.
+Presynaptic inhibition	An axoaxonic synapse effect that decreases neurotransmitter release.
+Astrocytes	Glial cells that ensheathe synapses/blood vessels, regulate extracellular K+, and promote synaptogenesis (e.g., via thrombospondin).
+Epileptogenesis	The process by which a healthy brain transforms into a seizure-prone brain.
+Gap junctions	Direct, bidirectional electrical synapses formed by aligned connexons between two neurons.
+Glycine	The major inhibitory neurotransmitter in the brainstem and spinal cord; blocked by the poison strychnine.
+Agonist	A substance that mimics or enhances a neurotransmitter's effect at its receptor.
+Antagonist	A substance that blocks or decreases a neurotransmitter's effect at its receptor.
+Affinity	A drug's tendency to bind closely to its target receptor.
+Efficacy	A drug's ability to produce the desired effect for a condition.
+Potency	A drug's ability to induce an effect relative to other drugs.
+Pharmacokinetics	What the body does to a drug — absorption, distribution, metabolism, elimination.
+Pharmacodynamics	What a drug does to the body — its effects and mechanisms.
+Placebo effect	Improvement due to belief in a treatment, not the treatment itself.
+Endocannabinoids	Lipid-derived transmitters (e.g., anandamide) made on-demand and not stored in vesicles.
+Retrograde neurotransmitter	A neurotransmitter released by the postsynaptic neuron that acts back on the presynaptic axon.
+Opioid receptors	Mu, delta, and kappa receptors that respond to endogenous opioids (endorphins, enkephalins) and drugs like morphine.
+THC	δ-9-tetrahydrocannabinol — the active psychoactive ingredient in cannabis; acts on cannabinoid receptors.
+Doogie mice	Tsien (2000) transgenic mice with enhanced NMDA receptor function showed better object recognition, memory, and maze-solving.
+Curare	A poison that blocks nicotinic acetylcholine receptors at the neuromuscular junction, causing paralysis.
+Bystander stress study (Mychasiuk et al., 2011)	Indirect prenatal stress (a stressed cage-mate) altered dendritic length/spine density in rat offspring brains, with females more affected than males.
+Spatial vs. temporal summation (firing rate limit)	Temporal summation is limited by one neuron's max firing rate (~200 Hz); spatial summation isn't, since it combines input from many different presynaptic neurons at once.
+Axon hillock	The site where the axon meets the soma; graded potentials decay with distance, so synapses closer to the hillock have more influence on whether an action potential fires.
+Synaptic cleft (size)	The gap between presynaptic and postsynaptic membranes, about 20–50 nanometers wide.
+Exocytosis	The process by which synaptic vesicles fuse with the presynaptic membrane and release neurotransmitter into the cleft.
+G-protein coupled receptor	A metabotropic receptor type; the G-protein relays/amplifies the signal inside the cell, can modulate nearby ion channels, enzymes, or gene expression.
+Myasthenia Gravis	Autoimmune disease where antibodies attack postsynaptic ACh receptors at the neuromuscular junction, causing progressive muscle weakness; no cure.
+Substantia nigra	"Black substance" — a pigmented, dopaminergic-neuron-rich part of the basal ganglia; its degeneration causes Parkinson's disease.
+L-DOPA	A dopamine precursor that can cross the blood-brain barrier (unlike dopamine itself); used to treat Parkinson's disease, though tolerance develops over time.
+Resting tremor	A tremor that occurs when the affected body part is at rest (not moving); characteristic of Parkinson's disease, distinct from intention tremor.
+Huntington's disease	Autosomal dominant genetic disorder causing chorea (excessive involuntary movement); caused by death of inhibitory medium spiny neurons in the striatum.
+Medium spiny neurons	Inhibitory, GABAergic neurons of the caudate/putamen (striatum); their death causes the excess movement seen in Huntington's disease.
+Chorea	Involuntary, irregular, dance-like movements; a hallmark symptom of Huntington's disease (hemiballism is a severe throwing-like form).
+Botulinum toxin (Botox)	Blocks ACh release from presynaptic terminals, causing flaccid paralysis; effects last ~3 months.
+Black widow spider venom	Promotes/over-stimulates ACh release from presynaptic terminals, causing rigid paralysis (opposite mechanism to Botox).
+Muscarine	Selectively activates metabotropic ACh receptors; used with nicotine to pharmacologically distinguish ionotropic from metabotropic ACh receptor effects.
+Acetylcholinesterase	The enzyme that breaks down ACh into choline + acetate in the synaptic cleft; blocking it prolongs ACh signaling.
+SSRI (Prozac) mechanism	Selectively blocks the serotonin reuptake transporter, keeping serotonin in the synaptic cleft longer and amplifying serotonergic signaling.
+Typical vs. atypical antipsychotics	Typical (e.g., Haldol) mainly block/decrease dopamine; atypical (e.g., Risperdal) work more on serotonin.
+Novocaine	A cocaine derivative used for local anesthesia; works by reducing Na⁺ channel permeability, unlike cocaine's psychoactive reuptake-blocking effect.
