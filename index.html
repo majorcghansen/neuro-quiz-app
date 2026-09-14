@@ -197,6 +197,7 @@ const lectures = [
       <ul>
         <li>Worked with awake epilepsy patients (brain has no pain receptors). Back of brain → flashes of light; lateral → hearing sounds; midline → arm movement.</li>
         <li>Some stimulation evoked specific memories and emotions — information could be "read out" of the brain electrically.</li>
+        <li>Noticed patients often had an <b>aura</b> — a sensory warning sign (smell, flashing lights, etc.) right before a seizure — and theorized the aura's location marks where the seizure originates. Modern non-invasive scalp EEG nets can now localize seizure activity without surgery.</li>
       </ul>
       <h4>Michael Gazzaniga — split-brain research</h4>
       <ul>
@@ -305,15 +306,16 @@ const lectures = [
       </ul>
       <h4>Propagation down the axon</h4>
       <ul>
-        <li>Each AP triggers a graded potential in the next segment; if still above threshold there, it triggers a new AP ("regeneration").</li>
+        <li>Each AP triggers a graded potential in the next segment; if still above threshold there, it triggers a new AP ("regeneration") — analogous to propagating a plant cutting down the length of the axon.</li>
         <li>One-directional because the just-fired segment is hyperpolarized/refractory and can't immediately re-fire — signal only moves into "fresh" axon.</li>
       </ul>
       <h4>Myelination</h4>
       <ul>
         <li>CNS: oligodendrocytes myelinate axons. PNS: Schwann cells myelinate axons.</li>
         <li>Myelin blocks ion movement under the sheath (only graded potential there); <b>Nodes of Ranvier</b> are unmyelinated gaps where APs actually regenerate — this is <b>saltatory conduction</b>.</li>
+        <li>Why not myelinate everything? Myelin saves neuronal resources (fewer channels/pumps needed underneath), but producing myelin itself costs the body resources — a net trade-off between production cost and speed gained.</li>
         <li>Myelination is one of the last brain maturation processes (3rd trimester through 3rd decade of life); correlates with motor development and improved memory (hippocampus).</li>
-        <li>Multiple sclerosis = demyelinating disease. CNS myelin generally cannot regenerate; PNS (Schwann cell) myelin sometimes can, especially in children.</li>
+        <li>Multiple sclerosis = demyelinating disease. CNS myelin generally cannot regenerate; PNS (Schwann cell) myelin sometimes can, especially in children (regrowth follows the Schwann cell "trail"). Myelin can still increase with practice/use in a healthy nervous system, and once myelinated a segment typically stays myelinated for life. Spinal cord injury is an active research area — scar tissue formation blocks re-myelination along old paths.</li>
       </ul>
       <h4>Synaptic transmission (end of axon)</h4>
       <ul>
@@ -589,6 +591,7 @@ learnSection.querySelector('.lecture-header').click();
 /* ================= FLASHCARDS TAB ================= */
 const flashcards = [
   { front: "Aristotle", back: "Skeptic who did NOT believe the brain controls behavior — cited headless chickens/insects still moving." },
+  { front: "Aura", back: "A sensory warning sign (e.g., smell, flashing lights) that occurs right before a seizure; its location can help mark where the seizure originates." },
   { front: "Galen", back: "Physician to gladiators; first to link brain/head injury to behavioral change." },
   { front: "Fritz & Hitzig (1870)", back: "Stimulated dog brains with electricity; established the brain is electrically excitable with regional specificity, replicable across species." },
   { front: "Bartholow & Mary Rafferty", back: "First evidence electrical brain stimulation controls behavior in a living, awake human; contributed to the AMA banning non-consensual human experimentation." },
